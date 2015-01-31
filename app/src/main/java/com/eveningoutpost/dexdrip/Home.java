@@ -11,6 +11,8 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.eveningoutpost.dexdrip.Models.ActiveBluetoothDevice;
@@ -208,6 +210,13 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         }
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), menu_name, this);
+    }
+
+
+    public void addTreatment(View view) {
+        Log.w("Adding treatment", "MESSAGE");
+        Intent myIntent = new Intent(this, AddTreatment.class);
+        startActivity(myIntent);
     }
 
     public void displayCurrentInfo() {
