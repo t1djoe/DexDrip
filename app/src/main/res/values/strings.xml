@@ -3,7 +3,7 @@
 
     <string name="pref_I_understand_title"> I UNDERSTAND AND AGREE</string>
     <string name="pref_I_understand_summery">DexDrip MUST NOT BE USED TO MAKE MEDICAL DECISIONS. THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION. </string>
-    <string name="app_name">DexDrip</string>
+    <string name="app_name">DIYPanc</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_bluetooth_scan">BluetoothScan</string>
@@ -35,7 +35,7 @@
     <string name="title_activity_usb_connected">UsbConnectedActivity</string>
 
     <string-array name="menu_options">
-        <item>Dex Drip</item>
+        <item>DIYPanc</item>
         <item>Enter Calibration</item>
         <item>Calculated Data Table</item>
         <item>Raw Data Table</item>
@@ -69,6 +69,11 @@
     <string name="pref_dialog_mongodb_device_status_collection">Enter Device Status collection name"</string>
     <string name="pref_message_mongodb_device_status_collection">This is the name of the collection where the battery and other device data will be stored</string>
     <string name="pref_default_mongodb_device_status_collection">devicestatus</string>
+    <string name="pref_title_mongodb_treatment_collection">Treatments collection name</string>
+    <string name="pref_dialog_mongodb_treatment_collection">Enter Treatments collection name"</string>
+    <string name="pref_message_mongodb_treatment_collection">This is the name of the collection where the treatments will be stored</string>
+    <string name="pref_default_mongodb_treatment_collection">treatments</string>
+
     <!-- API Settings -->
     <string name="pref_title_api">API Upload (REST)</string>
     <string name="pref_title_api_enabled">Enabled</string>
@@ -85,4 +90,31 @@
     <!-- broadcast settings -->
     <string name="pref_title_broadcast_enabled">Broadcast locally</string>
     <string name="pref_summary_broadcast_enabled">Enable local broadcast of data so other apps (eg. NightWatch) can listen on new values</string>
+    <!-- prebolus settings -->
+    <string name="sel_eating_time">Time in minutes</string>
+
+    <string-array name="eating_time_array">
+        <item>Now</item>
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>45 Minutes</item>
+        <item>60 Minutes</item>
+    </string-array>
+
+    <string name="sel_event_type">Event type</string>
+    <string-array name="event_type_array">
+        <item>BG Check</item>
+        <item>Snack Bolus</item>
+        <item>Meal Bolus</item>
+        <item>Correction Bolus</item>
+        <item>Basal Insulin</item>
+        <item>Carb Correction</item>
+        <item>Note</item>
+        <item>Question</item>
+        <item>Exercise</item>
+        <item>Pump Site Change</item>
+        <item>Dexcom Sensor Start</item>
+        <item>D.A.D. Alert</item>
+    </string-array>
+
 </resources>

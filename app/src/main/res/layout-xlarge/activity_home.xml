@@ -10,67 +10,113 @@
 
     </FrameLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
-                android:layout_weight="0.80"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp" tools:context=".Home"
-                android:layout_marginTop="0dp">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:layout_weight="0.80"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp" tools:context=".Home"
+            android:layout_marginTop="0dp">
 
-                <TextView
-                    android:layout_width="900dp"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="#C30909"
-                    android:id="@+id/notices"
-                    android:background="#07000000"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    android:gravity="left|top"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:textSize="40dp"
-                    android:text="Alerts and messages" />
+            <TextView
+                android:layout_width="900dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#C30909"
+                android:id="@+id/notices"
+                android:background="#07000000"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:gravity="start|top"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text="Alerts and messages" />
 
-                <lecho.lib.hellocharts.view.LineChartView
-                    android:id="@+id/chart"
-                    android:layout_width="match_parent"
-                    android:layout_alignParentStart="false"
-                    android:layout_alignParentEnd="true"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="105dp">
-                </lecho.lib.hellocharts.view.LineChartView>
+            <lecho.lib.hellocharts.view.LineChartView
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentEnd="true"
+                android:layout_height="match_parent"
+                android:layout_marginTop="55dp"
+                android:layout_marginBottom="45dp">
+            </lecho.lib.hellocharts.view.LineChartView>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#07000000"
-                    android:id="@+id/currentBgValueRealTime"
-                    android:gravity="right"
-                    android:layout_alignParentEnd="true"
-                    android:paddingEnd="20dp"
-                    android:textSize="100dp"
-                    android:paddingTop="0dp" />
-            </RelativeLayout>
-
-            <lecho.lib.hellocharts.view.PreviewLineChartView
-                android:id="@+id/chart_preview"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_weight=".20"
+                android:layout_height="wrap_content"
+                android:background="#07000000"
+                android:id="@+id/currentBgValueRealTime"
+                android:gravity="end"
+                android:layout_alignParentEnd="true"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textSize="50sp"
+                android:paddingTop="0dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#07000000"
+                android:id="@+id/currentWixelBattery"
+                android:gravity="end"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:textSize="12sp"
+                android:paddingTop="0dp"
+                android:paddingBottom="10dp"
+                android:layout_alignParentTop="false"
+                android:textStyle="bold"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="false"
+                android:layout_alignStart="@+id/currentBgValueRealTime"
+                android:layout_alignParentStart="true" />
+
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/addTreatBtn"
+                android:textSize="16sp"
+                android:text="Add Treatment"
+                android:onClick="addTreatment"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/iob"
+                android:textSize="16sp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
-                android:layout_height="0dp">
-            </lecho.lib.hellocharts.view.PreviewLineChartView>
+                android:text="IOB: " />
 
-        </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cob"
+                android:textSize="16sp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:text="COB: " />
+
+        </RelativeLayout>
+
+        <lecho.lib.hellocharts.view.PreviewLineChartView
+            android:id="@+id/chart_preview"
+            android:layout_width="wrap_content"
+            android:layout_weight=".20"
+            android:layout_height="0dp">
+        </lecho.lib.hellocharts.view.PreviewLineChartView>
+
+    </LinearLayout>
 
     <fragment android:id="@+id/navigation_drawer"
         android:layout_width="@dimen/navigation_drawer_width" android:layout_height="match_parent"
@@ -79,4 +125,3 @@
         tools:layout="@layout/fragment_navigation_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
-

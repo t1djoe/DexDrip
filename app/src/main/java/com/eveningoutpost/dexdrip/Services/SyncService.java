@@ -10,18 +10,14 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.eveningoutpost.dexdrip.Models.BgReading;
-import com.eveningoutpost.dexdrip.Models.Calibration;
 import com.eveningoutpost.dexdrip.UtilityModels.BgSendQueue;
 import com.eveningoutpost.dexdrip.UtilityModels.CalibrationSendQueue;
 import com.eveningoutpost.dexdrip.UtilityModels.MongoSendTask;
-import com.eveningoutpost.dexdrip.UtilityModels.NightscoutUploader;
 import com.eveningoutpost.dexdrip.UtilityModels.RestCalls;
 import com.eveningoutpost.dexdrip.UtilityModels.SensorSendQueue;
+import com.eveningoutpost.dexdrip.UtilityModels.TreatmentSendQueue;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class SyncService extends Service {
     int mStartMode;
@@ -38,13 +34,8 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         attemptSend();
-        return START_STICKY;
-    }
-
-    @Override
-    public void onDestroy() {
         setRetryTimer();
-        Log.w("SYNC SERVICE", "SERVICE STOPPED");
+        return START_STICKY;
     }
 
     @Override
@@ -58,8 +49,10 @@ public class SyncService extends Service {
         enableRESTUpload = prefs.getBoolean("cloud_storage_api_enable", false);
         enableMongoUpload = prefs.getBoolean("cloud_storage_mongodb_enable", false);
 
-        if (enableRESTUpload || enableMongoUpload) { syncToMogoDb(); }
-
+        if (enableRESTUpload || enableMongoUpload) {
+            Log.w("SYNC TO MONGODB", "MongoUpload");
+            syncToMongoDb();
+        }
         if (false) {
             for (SensorSendQueue job : SensorSendQueue.queue()) {
                 RestCalls.sendSensor(job);
@@ -70,17 +63,19 @@ public class SyncService extends Service {
             for (BgSendQueue job : BgSendQueue.queue()) {
                 RestCalls.sendBgReading(job);
             }
+            for (TreatmentSendQueue job : TreatmentSendQueue.queue()) {
+                RestCalls.sendTreatment(job);
+            }
         }
-        setRetryTimer();
     }
 
     public void setRetryTimer() {
         Calendar calendar = Calendar.getInstance();
         AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarm.set(alarm.RTC_WAKEUP, calendar.getTimeInMillis() + (1000 * 30 * 5), PendingIntent.getService(this, 0, new Intent(this, SyncService.class), 0));
+        alarm.set(alarm.RTC_WAKEUP, calendar.getTimeInMillis() + (1000 * 60 * 5), PendingIntent.getService(this, 0, new Intent(this, SyncService.class), 0));
     }
 
-    public void syncToMogoDb() {
+    public void syncToMongoDb() {
         MongoSendTask task = new MongoSendTask(getApplicationContext());
         task.execute();
     }

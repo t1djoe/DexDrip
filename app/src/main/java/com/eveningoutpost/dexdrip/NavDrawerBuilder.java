@@ -9,6 +9,7 @@ import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Calibration;
 import com.eveningoutpost.dexdrip.Tables.BgReadingTable;
 import com.eveningoutpost.dexdrip.Tables.CalibrationDataTable;
+import com.eveningoutpost.dexdrip.Tables.TreatmentDataTable;
 import com.eveningoutpost.dexdrip.UtilityModels.CollectionServiceStarter;
 
 import java.util.ArrayList;
@@ -34,12 +35,13 @@ public class NavDrawerBuilder {
             return options;
         }
 
-        options.add("DexDrip");
+        options.add("DIYPanc");
         if(is_active_sensor) {
             options.add("Calibration Graph");
         }
         options.add("BG Data Table");
         options.add("Calibration Data Table");
+        options.add("Treatment Data Table");
 //        options.add("Sensor Data Table");
 
         if(is_active_sensor) {
@@ -58,7 +60,7 @@ public class NavDrawerBuilder {
             options.add("Stop Sensor");
         } else { options.add("Start Sensor"); }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if(CollectionServiceStarter.isBTWixel(context)) {
+            if(CollectionServiceStarter.isBTWixel(context) || CollectionServiceStarter.isDexbridge(context)) {
                 options.add("Scan for BT");
             }
         }
@@ -83,6 +85,7 @@ public class NavDrawerBuilder {
         }
         options.add(new Intent(context, BgReadingTable.class));
         options.add(new Intent(context, CalibrationDataTable.class));
+        options.add(new Intent(context, TreatmentDataTable.class));
 //        options.add(new Intent(context, SensorDataTable.class));
 
 
@@ -102,7 +105,7 @@ public class NavDrawerBuilder {
             options.add(new Intent(context, StopSensor.class));
         } else { options.add(new Intent(context, StartNewSensor.class)); }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if(CollectionServiceStarter.isBTWixel(context)) {
+            if(CollectionServiceStarter.isBTWixel(context) || CollectionServiceStarter.isDexbridge(context)) {
                 options.add(new Intent(context, BluetoothScan.class));
             }
         }

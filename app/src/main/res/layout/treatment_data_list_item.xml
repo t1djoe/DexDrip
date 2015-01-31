@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/treatment_data_list_item">
+
+    <TextView android:id="@+id/bg"
+        android:layout_width="132dp"
+        android:layout_height="wrap_content"
+        android:textSize="20dp" />
+
+    <TextView android:id="@+id/reading_type"
+        android:layout_width="132dp"
+        android:layout_height="wrap_content"
+        android:textSize="12dp" />
+
+    <TextView android:id="@+id/event_type"
+        android:layout_width="132dp"
+        android:layout_height="wrap_content"
+        android:textSize="12dp" />
+
+    <TextView android:id="@+id/carbs"
+        android:layout_width="87dp"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"/>
+
+    <TextView android:id="@+id/insulin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"/>
+
+    <TextView android:id="@+id/eating_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"/>
+
+    <TextView android:id="@+id/notes"
+        android:layout_width="132dp"
+        android:layout_height="wrap_content"
+        android:textSize="12dp" />
+
+    <TextView android:id="@+id/entered_by"
+        android:layout_width="132dp"
+        android:layout_height="wrap_content"
+        android:textSize="12dp" />
+
+    <TextView android:id="@+id/treatment_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"/>
+
+</LinearLayout>

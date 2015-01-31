@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Calibration;
+import com.eveningoutpost.dexdrip.Models.Treatments;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -61,37 +62,40 @@ public class NightscoutUploader {
             enableMongoUpload = prefs.getBoolean("cloud_storage_mongodb_enable", false);
         }
 
-        public boolean upload(BgReading glucoseDataSet, Calibration meterRecord, Calibration calRecord) {
+        public boolean upload(BgReading glucoseDataSet, Calibration meterRecord, Calibration calRecord, Treatments treatmentRecord) {
             List<BgReading> glucoseDataSets = new ArrayList<BgReading>();
             glucoseDataSets.add(glucoseDataSet);
             List<Calibration> meterRecords = new ArrayList<Calibration>();
             meterRecords.add(meterRecord);
             List<Calibration> calRecords = new ArrayList<Calibration>();
             calRecords.add(calRecord);
-            return upload(glucoseDataSets, meterRecords, calRecords);
+            List<Treatments> treatmentRecords = new ArrayList<Treatments>();
+            treatmentRecords.add(treatmentRecord);
+            return upload(glucoseDataSets, meterRecords, calRecords, treatmentRecords);
         }
 
-        public boolean upload(List<BgReading> glucoseDataSets, List<Calibration> meterRecords, List<Calibration> calRecords) {
+        public boolean upload(List<BgReading> glucoseDataSets, List<Calibration> meterRecords, List<Calibration> calRecords, List<Treatments> treatmentRecords) {
             boolean mongoStatus = false;
             boolean apiStatus = false;
 
             if (enableRESTUpload) {
                 long start = System.currentTimeMillis();
-                Log.i(TAG, String.format("Starting upload of %s record using a REST API", glucoseDataSets.size()));
-                apiStatus = doRESTUpload(prefs, glucoseDataSets, meterRecords, calRecords);
-                Log.i(TAG, String.format("Finished upload of %s record using a REST API in %s ms", glucoseDataSets.size(), System.currentTimeMillis() - start));
+                Log.i(TAG, String.format("Starting upload of %s record using a REST API", (glucoseDataSets.size() + meterRecords.size() + calRecords.size() + treatmentRecords.size())));
+                apiStatus = doRESTUpload(prefs, glucoseDataSets, meterRecords, calRecords, treatmentRecords);
+                Log.i(TAG, String.format("Finished upload of %s record using a REST API in %s ms", (glucoseDataSets.size() + meterRecords.size() + calRecords.size() + treatmentRecords.size()), System.currentTimeMillis() - start));
             }
 
             if (enableMongoUpload) {
                 double start = new Date().getTime();
-                mongoStatus = doMongoUpload(prefs, glucoseDataSets, meterRecords, calRecords);
-                Log.i(TAG, String.format("Finished upload of %s record using a Mongo in %s ms", glucoseDataSets.size() + meterRecords.size(), System.currentTimeMillis() - start));
+                Log.i(TAG, String.format("Starting upload of %s record using a Mongo", (glucoseDataSets.size() + meterRecords.size() + calRecords.size() + treatmentRecords.size())));
+                mongoStatus = doMongoUpload(prefs, glucoseDataSets, meterRecords, calRecords, treatmentRecords);
+                Log.i(TAG, String.format("Finished upload of %s record using a Mongo in %s ms", (glucoseDataSets.size() + meterRecords.size() + calRecords.size() + treatmentRecords.size()), System.currentTimeMillis() - start));
             }
 
-                return apiStatus || mongoStatus;
+            return apiStatus || mongoStatus;
         }
 
-        private boolean doRESTUpload(SharedPreferences prefs, List<BgReading> glucoseDataSets, List<Calibration> meterRecords, List<Calibration> calRecords) {
+        private boolean doRESTUpload(SharedPreferences prefs, List<BgReading> glucoseDataSets, List<Calibration> meterRecords, List<Calibration> calRecords, List<Treatments> treatmentRecords) {
             String baseURLSettings = prefs.getString("cloud_storage_api_base", "");
             ArrayList<String> baseURIs = new ArrayList<String>();
 
@@ -108,7 +112,7 @@ public class NightscoutUploader {
 
             for (String baseURI : baseURIs) {
                 try {
-                    doRESTUploadTo(baseURI, glucoseDataSets, meterRecords, calRecords);
+                    doRESTUploadTo(baseURI, glucoseDataSets, meterRecords, calRecords, treatmentRecords);
                 } catch (Exception e) {
                     Log.e(TAG, "Unable to do REST API Upload");
                     return false;
@@ -117,7 +121,7 @@ public class NightscoutUploader {
             return true;
         }
 
-        private void doRESTUploadTo(String baseURI, List<BgReading> glucoseDataSets, List<Calibration> meterRecords, List<Calibration> calRecords) {
+        private void doRESTUploadTo(String baseURI, List<BgReading> glucoseDataSets, List<Calibration> meterRecords, List<Calibration> calRecords, List<Treatments> treatmentRecords) {
             try {
                 int apiVersion = 0;
                 if (baseURI.endsWith("/v1/")) apiVersion = 1;
@@ -258,16 +262,56 @@ public class NightscoutUploader {
                     }
                 }
 
+                String treatPostURL = baseURL + "treatments";
+                Log.i(TAG, "treatPostURL: " + treatPostURL);
+                HttpPost treatPost = new HttpPost(treatPostURL);
+
+                if (apiVersion >= 1) {
+                    for (Treatments treatmentRecord : treatmentRecords) {
+                        Log.i(TAG, "treatmentRecord REST Upload");
+                        JSONObject json = new JSONObject();
+
+                        try {
+                            populateV1APITreatmentEntry(json, treatmentRecord);
+                            Log.i(TAG, "treatmentEntry populated");
+                        } catch (Exception e) {
+                            Log.w(TAG, "Unable to populate entry");
+                            continue;
+                        }
+
+                        String jsonString = json.toString();
+                        Log.i(TAG, "TREATMENT JSON: " + jsonString);
+
+                        try {
+                            StringEntity se = new StringEntity(jsonString);
+                            Log.i(TAG, "Stringentity se" + se);
+                            treatPost.setEntity(se);
+                            Log.i(TAG, "treatPost.setEntity");
+                            treatPost.setHeader("Accept", "application/json");
+                            Log.i(TAG, "treatPost.setHeader Accept");
+                            treatPost.setHeader("Content-type", "application/json");
+                            Log.i(TAG, "treatPost.setHeader Content-type");
+
+                            ResponseHandler responseHandler = new BasicResponseHandler();
+                            Log.i(TAG, "responseHandler");
+                            httpclient.execute(treatPost, responseHandler);
+                            Log.i(TAG, "post.setHeader Accept");
+                        } catch (Exception e) {
+                            Log.w(TAG, "Unable to post treatment data");
+                        }
+                    }
+                }
+
                 // TODO: this is a quick port from the original code and needs to be checked before release
                 postDeviceStatus(baseURL, apiSecretHeader, httpclient);
 
             } catch (Exception e) {
-                Log.w(TAG, "Unable to post data");
+            Log.w(TAG, "Unable to post data");
             }
         }
 
         private void populateV1APIBGEntry(JSONObject json, BgReading record) throws Exception {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
             format.setTimeZone(TimeZone.getDefault());
             json.put("device", "dexcom");
             json.put("date", record.timestamp);
@@ -281,7 +325,7 @@ public class NightscoutUploader {
         }
 
         private void populateLegacyAPIEntry(JSONObject json, BgReading record) throws Exception {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
             format.setTimeZone(TimeZone.getDefault());
             json.put("device", "dexcom");
             json.put("date", record.timestamp);
@@ -291,7 +335,7 @@ public class NightscoutUploader {
         }
 
         private void populateV1APIMeterReadingEntry(JSONObject json, Calibration record) throws Exception {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
             format.setTimeZone(TimeZone.getDefault());
             json.put("device", "dexcom");
             json.put("type", "mbg");
@@ -301,7 +345,7 @@ public class NightscoutUploader {
         }
 
         private void populateV1APICalibrationEntry(JSONObject json, Calibration record) throws Exception {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
             format.setTimeZone(TimeZone.getDefault());
 
             json.put("device", "dexcom");
@@ -311,6 +355,22 @@ public class NightscoutUploader {
             json.put("slope", (int)(record.slope * 1000));
             json.put("intercept", (int) record.intercept);
             json.put("scale", 1000);
+        }
+
+
+        private void populateV1APITreatmentEntry(JSONObject json, Treatments record) throws Exception {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
+            format.setTimeZone(TimeZone.getDefault());
+
+            json.put("enteredBy", record.entered_by);
+            json.put("eventType", record.event_type);
+            json.put("glucose", record.bg);
+            json.put("glucoseType", record.reading_type);
+            json.put("carbs", record.carbs);
+            json.put("insulin", record.insulin);
+            json.put("notes", record.notes);
+            json.put("preBolus", record.eating_time);
+            json.put("created_at", format.format(record.treatment_time));
         }
 
         // TODO: this is a quick port from original code and needs to be refactored before release
@@ -337,14 +397,14 @@ public class NightscoutUploader {
             httpclient.execute(post, responseHandler);
         }
 
-        private boolean doMongoUpload(SharedPreferences prefs, List<BgReading> glucoseDataSets,
-                                      List<Calibration> meterRecords,  List<Calibration> calRecords) {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss a");
+        private boolean doMongoUpload(SharedPreferences prefs, List<BgReading> glucoseDataSets, List<Calibration> meterRecords,  List<Calibration> calRecords, List<Treatments> treatmentRecords) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
             format.setTimeZone(TimeZone.getDefault());
 
             String dbURI = prefs.getString("cloud_storage_mongodb_uri", null);
             String collectionName = prefs.getString("cloud_storage_mongodb_collection", null);
             String dsCollectionName = prefs.getString("cloud_storage_mongodb_device_status_collection", "devicestatus");
+            String tCollectionName = prefs.getString("cloud_storage_mongodb_treatments_collection", "treatments");
 
             if (dbURI != null && collectionName != null) {
                 try {
@@ -399,7 +459,48 @@ public class NightscoutUploader {
                         dexcomData.update(testData, testData, true, false, WriteConcern.UNACKNOWLEDGED);
                     }
 
-                    // TODO: quick port from original code, revisit before release
+                    Log.i(TAG, "The number of treatment records being sent to MongoDB is " + treatmentRecords.size());
+                    for (Treatments treatRecord : treatmentRecords) {
+                        // make db object
+                        DBCollection treatCollection = db.getCollection(tCollectionName.trim());
+                        Log.w(TAG, "db object created");
+                        BasicDBObject treatData = new BasicDBObject();
+                        Log.w(TAG, "treatData created");
+
+                        treatData.put("enteredBy", treatRecord.entered_by);
+                        treatData.put("eventType", treatRecord.event_type);
+                        if (treatRecord.eating_time == 0){
+                            if (treatRecord.carbs != 0){
+                                treatData.put("carbs", treatRecord.carbs);}}
+                        if (treatRecord.bg != 0) {
+                            treatData.put("glucose", treatRecord.bg);
+                            treatData.put("glucoseType", treatRecord.reading_type);}
+                        if (treatRecord.insulin != 0){
+                            treatData.put("insulin", treatRecord.insulin);}
+                        if (treatRecord.notes.length() > 0){
+                            treatData.put("notes", treatRecord.notes);}
+                        if (treatRecord.entered_by != ""){
+                        }
+                        treatData.put("created_at", format.format(treatRecord.treatment_time));
+                        if (treatRecord.eating_time > 0){
+                            treatData.put("preBolus", treatRecord.eating_time);
+                            Log.w(TAG, "Prebolus data populated");
+                            treatCollection.insert(treatData, WriteConcern.UNACKNOWLEDGED);
+                            Log.w(TAG, "Prebolus data inserted");
+                            BasicDBObject eatData = new BasicDBObject();
+                            eatData.put("created_at", format.format((treatRecord.treatment_time + (treatRecord.eating_time * 60000))));
+                            eatData.put("eventType", treatRecord.event_type);
+                            eatData.put("carbs", treatRecord.carbs);
+                            Log.w(TAG, "Eating data populated");
+                            treatCollection.insert(eatData, WriteConcern.UNACKNOWLEDGED);
+                            Log.w(TAG, "Eating data inserted");}
+                        else{
+                            Log.w(TAG, "Treatment data populated");
+                            treatCollection.insert(treatData, WriteConcern.UNACKNOWLEDGED);
+                            Log.w(TAG, "Treatment data inserted");
+                        }
+                    }
+
                     DBCollection dsCollection = db.getCollection(dsCollectionName);
                     BasicDBObject devicestatus = new BasicDBObject();
                     devicestatus.put("uploaderBattery", getBatteryLevel());
@@ -416,6 +517,8 @@ public class NightscoutUploader {
             }
             return false;
         }
+
+
     public int getBatteryLevel() {
         Intent batteryIntent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);

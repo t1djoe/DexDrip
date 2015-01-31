@@ -22,7 +22,7 @@ public class TransmitterRawData {
     public int UploaderBatteryLife;
     // When sending set this value to the relative time...
     // The time between the capture and now...
-    public long RelativeTime; 
+    public long RelativeTime;
 
     public int getTransmissionId() {
         return TransmissionId;
@@ -119,42 +119,37 @@ public class TransmitterRawData {
     public TransmitterRawData(){
 
     }
-/*
-    public TransmitterRawData(String id, String raw, String filter, String battery, String rssi, int uploaderBattery){
-        RawValue = Integer.parseInt(raw);
-        FilteredValue = Integer.parseInt(filter);
-        TransmitterId = id;
-        BatteryLife = Integer.parseInt(battery);
-        ReceivedSignalStrength = Integer.parseInt(rssi);
-        CaptureDateTime = new Date().getTime();
-        UploaderBatteryLife = uploaderBattery;
-
-        Uploaded = 0;
-        UploadAttempts = 1;
-    }
-
-    public TransmitterRawData(byte[] buffer, int len, Context context){
-
-        StringBuilder toParse = new StringBuilder();
-        for (int i = 0; i < len; ++i) {
-            toParse.append((char) buffer[i]);
+    /*
+        public TransmitterRawData(String id, String raw, String filter, String battery, String rssi, int uploaderBattery){
+            RawValue = Integer.parseInt(raw);
+            FilteredValue = Integer.parseInt(filter);
+            TransmitterId = id;
+            BatteryLife = Integer.parseInt(battery);
+            ReceivedSignalStrength = Integer.parseInt(rssi);
+            CaptureDateTime = new Date().getTime();
+            UploaderBatteryLife = uploaderBattery;
+            Uploaded = 0;
+            UploadAttempts = 1;
         }
-        String[] parsed = toParse.toString().split("\\s+");
-
-        RawValue = Integer.parseInt(parsed[1]);
-        FilteredValue = Integer.parseInt(parsed[2]);
-        TransmitterId = parsed[0];
-        BatteryLife = Integer.parseInt(parsed[3]);
-        ReceivedSignalStrength = Integer.parseInt(parsed[4]);
-        TransmissionId = Integer.parseInt(parsed[5]);
-        CaptureDateTime = new Date().getTime();
-
-        Intent i = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        UploaderBatteryLife = i.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        Uploaded = 0;
-        UploadAttempts = 1;
-    }
-*/
+        public TransmitterRawData(byte[] buffer, int len, Context context){
+            StringBuilder toParse = new StringBuilder();
+            for (int i = 0; i < len; ++i) {
+                toParse.append((char) buffer[i]);
+            }
+            String[] parsed = toParse.toString().split("\\s+");
+            RawValue = Integer.parseInt(parsed[1]);
+            FilteredValue = Integer.parseInt(parsed[2]);
+            TransmitterId = parsed[0];
+            BatteryLife = Integer.parseInt(parsed[3]);
+            ReceivedSignalStrength = Integer.parseInt(parsed[4]);
+            TransmissionId = Integer.parseInt(parsed[5]);
+            CaptureDateTime = new Date().getTime();
+            Intent i = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            UploaderBatteryLife = i.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            Uploaded = 0;
+            UploadAttempts = 1;
+        }
+    */
     public String toTableString()
     {
         String displayDt = new Date(getCaptureDateTime()).toLocaleString() + System.getProperty("line.separator");
@@ -172,28 +167,28 @@ public class TransmitterRawData {
     }
 
     public BasicDBObject toDbObj(String DebugInfo) {
-    	BasicDBObject doc = new BasicDBObject("TransmissionId", TransmissionId).
-    			append("TransmitterId", TransmitterId).
-    			append("RawValue", RawValue).
-    			append("FilteredValue", FilteredValue).
-    			append("BatteryLife", BatteryLife).
-    			append("ReceivedSignalStrength", ReceivedSignalStrength).
-    			append("CaptureDateTime", CaptureDateTime).
-    			append("UploaderBatteryLife", UploaderBatteryLife).
-    			append("DebugInfo", DebugInfo);
-    	return doc;
+        BasicDBObject doc = new BasicDBObject("TransmissionId", TransmissionId).
+                append("TransmitterId", TransmitterId).
+                append("RawValue", RawValue).
+                append("FilteredValue", FilteredValue).
+                append("BatteryLife", BatteryLife).
+                append("ReceivedSignalStrength", ReceivedSignalStrength).
+                append("CaptureDateTime", CaptureDateTime).
+                append("UploaderBatteryLife", UploaderBatteryLife).
+                append("DebugInfo", DebugInfo);
+        return doc;
     }
-    
+
     public TransmitterRawData(BasicDBObject src) {
-    	TransmissionId = src.getInt("TransmissionId");
-    	TransmitterId  = src.getString("TransmitterId");
-    	RawValue       = src.getInt("RawValue");
-    	FilteredValue  = src.getInt("FilteredValue");
-    	BatteryLife    = src.getInt("BatteryLife");
-    	ReceivedSignalStrength = src.getInt("ReceivedSignalStrength");
-    	CaptureDateTime = src.getLong("CaptureDateTime");
-    	UploaderBatteryLife = src.getInt("UploaderBatteryLife");
+        TransmissionId = src.getInt("TransmissionId");
+        TransmitterId  = src.getString("TransmitterId");
+        RawValue       = src.getInt("RawValue");
+        FilteredValue  = src.getInt("FilteredValue");
+        BatteryLife    = src.getInt("BatteryLife");
+        ReceivedSignalStrength = src.getInt("ReceivedSignalStrength");
+        CaptureDateTime = src.getLong("CaptureDateTime");
+        UploaderBatteryLife = src.getInt("UploaderBatteryLife");
     }
-   
+
 
 }

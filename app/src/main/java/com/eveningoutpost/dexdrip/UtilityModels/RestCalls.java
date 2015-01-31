@@ -5,8 +5,10 @@ import android.util.Log;
 import com.eveningoutpost.dexdrip.Interfaces.BgReadingInterface;
 import com.eveningoutpost.dexdrip.Interfaces.CalibrationInterface;
 import com.eveningoutpost.dexdrip.Interfaces.SensorInterface;
+import com.eveningoutpost.dexdrip.Interfaces.TreatmentInterface;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Calibration;
+import com.eveningoutpost.dexdrip.Models.Treatments;
 import com.eveningoutpost.dexdrip.Sensor;
 import com.eveningoutpost.dexdrip.Models.User;
 import com.google.gson.Gson;
@@ -123,9 +125,30 @@ public class RestCalls {
         );
     }
 
+    public static void sendTreatment(final TreatmentSendQueue treatmentSendQueue) {
+        User user = User.currentUser();
+        treatmentInterface().createReading(user.uuid, treatmentSendQueue.treatment, new Callback<Gson>() {
+                    @Override
+                    public void success(Gson gsonResponse, Response response) {
+                        treatmentSendQueue.success = true;
+                        treatmentSendQueue.save();
+                        Treatments treatment = treatmentSendQueue.treatment;
+                        treatment.save();
+                    }
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Response response = error.getResponse();
+                        Log.w("REST CALL ERROR:", "****************");
+                        Log.w("REST CALL STATUS:", "" + response.getStatus());
+                        Log.w("REST CALL REASON:", response.getReason());
+                    }
+                }
+        );
+    }
+
     public static BgReadingInterface bgReadingInterface() {
         RestAdapter adapter = adapterBuilder().build();
-            BgReadingInterface bgReadingInterface =
+        BgReadingInterface bgReadingInterface =
                 adapter.create(BgReadingInterface.class);
         return bgReadingInterface;
     }
@@ -145,6 +168,12 @@ public class RestCalls {
         return calibrationInterface;
     }
 
+    public static TreatmentInterface treatmentInterface() {
+        RestAdapter adapter = adapterBuilder().build();
+        TreatmentInterface treatmentInterface =
+                adapter.create(TreatmentInterface.class);
+        return treatmentInterface;
+    }
     public static RestAdapter.Builder adapterBuilder() {
         RestAdapter.Builder adapterBuilder = new RestAdapter.Builder();
         adapterBuilder

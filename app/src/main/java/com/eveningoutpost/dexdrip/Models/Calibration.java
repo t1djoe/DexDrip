@@ -53,10 +53,10 @@ public class Calibration extends Model {
     @Expose
     @Column(name = "raw_value")
     public double raw_value;
-//
-//    @Expose
-//    @Column(name = "filtered_value")
-//    public double filtered_value;
+
+    @Expose
+    @Column(name = "filtered_value")
+    public double filtered_value;
 
     @Expose
     @Column(name = "adjusted_raw_value")

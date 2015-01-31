@@ -30,6 +30,9 @@ public class Sensor extends Model {
     @Column(name = "latest_battery_level")
     public int latest_battery_level;
 
+    @Column(name = "wixel_battery_level")
+    public int wixel_battery_level;
+
 //    @Expose
     @Column(name = "uuid", index = true)
     public String uuid;

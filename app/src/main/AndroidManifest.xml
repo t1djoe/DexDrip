@@ -3,12 +3,10 @@
     package="com.eveningoutpost.dexdrip" >
 
     <permission android:name="com.eveningoutpost.dexdrip.permissions.RECEIVE_BG_ESTIMATE"/>
-
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
     <uses-feature android:name="android.hardware.usb.host" />
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -29,22 +27,26 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="DexDrip.db" />
+            android:value="DIYPanc.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="20" />
+            android:value="10" />
 
         <!-- <provider android:authorities="com.example" android:exported="false" android:name="com.activeandroid.content.ContentProvider" /> -->
 
         <activity
-            android:name=".Home"
+            android:name="Home"
             android:label="@string/app_name"
             android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <category android:name="android.intent.category.HOME"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".AddTreatment"
+            android:label="Add Treatment" >
         </activity>
         <activity
             android:name=".BluetoothScan"
@@ -64,6 +66,10 @@
         <activity
             android:name=".Tables.SensorDataTable"
             android:label="Sensor Table" >
+        </activity>
+        <activity
+            android:name=".Tables.TreatmentDataTable"
+            android:label="Treatment Table" >
         </activity>
         <activity
             android:name=".AddCalibration"
@@ -91,11 +97,6 @@
 
         <service
             android:name=".Services.SyncService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
-        <service
-            android:name=".ImportedLibraries.dexcom.SyncingService"
             android:enabled="true"
             android:exported="true" >
         </service>
@@ -127,7 +128,6 @@
         <activity
             android:name=".CalibrationCheckInActivity"
             android:label="@string/title_activity_calibration_check_in" >
-
         </activity>
         <activity
             android:name=".UsbConnectedActivity"
@@ -140,6 +140,7 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
+
     </application>
 
 </manifest>

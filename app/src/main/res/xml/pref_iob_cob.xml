@@ -1,0 +1,43 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <PreferenceCategory
+        android:dependency="I_understand"
+        android:title="IOB/COB"
+        android:key="iobcob">
+
+        <EditTextPreference
+            android:title="Basal Average"
+            android:key="basal"
+            android:dialogTitle="Enter Basal Rate hourly Average for 24 Hours"
+            android:defaultValue="1.0">
+        </EditTextPreference>
+        <EditTextPreference
+            android:title="Insulin to Carb Ratio"
+            android:key="carbRatio"
+            android:dialogTitle="Grams of Carbs per Unit of Insulin"
+            android:defaultValue="10.0">
+        </EditTextPreference>
+        <EditTextPreference
+            android:title="Carbs per Hour"
+            android:key="carbs_hr"
+            android:dialogTitle="Grams of Carbs per Hour"
+            android:defaultValue="30.0">
+        </EditTextPreference>
+        <EditTextPreference
+            android:title="Duration of Action"
+            android:key="insulinDIA"
+            android:dialogTitle="Duration of Insulin Action, in Hours"
+            android:defaultValue="3">
+        </EditTextPreference>
+        <EditTextPreference
+            android:title="Sensitivity"
+            android:key="sensitivity"
+            android:dialogTitle="Insulin Sensitivity in mg/dL per Unit"
+            android:defaultValue="20.0">
+        </EditTextPreference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

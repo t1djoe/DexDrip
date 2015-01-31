@@ -9,14 +9,14 @@ import com.google.gson.annotations.Expose;
 // 	1) the client connects
 //  2) send this message.
 //  3) the server will send numberOfRecords of type ???? that it has.
-public class ComunicationHeader  {
-	/**
-	 * 
-	 */
+public class CommunicationHeader  {
+    /**
+     *
+     */
 
 
-	int version;
-	int numberOfRecords;
+    int version;
+    int numberOfRecords;
 //	String message;
 //	byte reserved[];
 }

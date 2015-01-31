@@ -49,6 +49,10 @@ public class BgReading extends Model {
     public double raw_data;
 
     @Expose
+    @Column(name = "filtered_data")
+    public double filtered_data;
+
+    @Expose
     @Column(name = "age_adjusted_raw_value")
     public double age_adjusted_raw_value;
 
@@ -99,7 +103,7 @@ public class BgReading extends Model {
     @Column(name = "sensor_uuid", index = true)
     public String sensor_uuid;
 
-    @Column(name = "snyced")
+    @Column(name = "synced")
     public boolean synced;
 
     public double calculated_value_mmol() {
@@ -155,7 +159,7 @@ public class BgReading extends Model {
     }
 
     //*******CLASS METHODS***********//
-    public static BgReading create(double raw_data, Context context) {
+    public static BgReading create(double raw_data, double filtered_data, Context context) {
         BgReading bgReading = new BgReading();
         Sensor sensor = Sensor.currentSensor();
         if (sensor != null) {
@@ -164,6 +168,7 @@ public class BgReading extends Model {
                 bgReading.sensor = sensor;
                 bgReading.sensor_uuid = sensor.uuid;
                 bgReading.raw_data = (raw_data / 1000);
+                bgReading.filtered_data = (filtered_data / 1000);
                 bgReading.timestamp = new Date().getTime();
                 bgReading.uuid = UUID.randomUUID().toString();
                 bgReading.time_since_sensor_started = bgReading.timestamp - sensor.started_at;
@@ -188,6 +193,7 @@ public class BgReading extends Model {
                 bgReading.calibration = calibration;
                 bgReading.calibration_uuid = calibration.uuid;
                 bgReading.raw_data = (raw_data/1000);
+                bgReading.filtered_data = (filtered_data / 1000);
                 bgReading.timestamp = new Date().getTime();
                 bgReading.uuid = UUID.randomUUID().toString();
                 bgReading.time_since_sensor_started = bgReading.timestamp - sensor.started_at;
@@ -418,25 +424,25 @@ public class BgReading extends Model {
         } else if (last_3.size() == 2) {
 
             Log.w(TAG, "Not enough data to calculate parabolic rates - assume Linear");
-                BgReading latest = last_3.get(0);
-                BgReading second_latest = last_3.get(1);
+            BgReading latest = last_3.get(0);
+            BgReading second_latest = last_3.get(1);
 
-                double y2 = latest.calculated_value;
-                double x2 = timestamp;
-                double y1 = second_latest.calculated_value;
-                double x1 = second_latest.timestamp;
+            double y2 = latest.calculated_value;
+            double x2 = timestamp;
+            double y1 = second_latest.calculated_value;
+            double x1 = second_latest.timestamp;
 
-                if(y1 == y2) {
-                    b = 0;
-                } else {
-                    b = (y2 - y1)/(x2 - x1);
-                }
-                a = 0;
-                c = -1 * ((latest.b * x1) - y1);
+            if(y1 == y2) {
+                b = 0;
+            } else {
+                b = (y2 - y1)/(x2 - x1);
+            }
+            a = 0;
+            c = -1 * ((latest.b * x1) - y1);
 
             Log.w(TAG, ""+latest.a+"x^2 + "+latest.b+"x + "+latest.c);
-                save();
-            } else {
+            save();
+        } else {
             Log.w(TAG, "Not enough data to calculate parabolic rates - assume static data");
             a = 0;
             b = 0;

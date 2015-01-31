@@ -32,7 +32,7 @@ import lecho.lib.hellocharts.view.PreviewLineChartView;
 
 
 public class Home extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-    private String menu_name = "DexDrip";
+    private String menu_name = "DIYPanc";
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private LineChartView chart;
     private PreviewLineChartView previewChart;
@@ -169,10 +169,12 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
 
     public void updateCurrentBgInfo() {
         final TextView currentBgValueText = (TextView) findViewById(R.id.currentBgValueRealTime);
+        final TextView currentWixelBatteryText = (TextView) findViewById(R.id.currentWixelBattery);
         final TextView notificationText = (TextView)findViewById(R.id.notices);
         notificationText.setText("");
         boolean isBTWixel = CollectionServiceStarter.isBTWixel(getApplicationContext());
-        if((isBTWixel && ActiveBluetoothDevice.first() != null) || (!isBTWixel && WixelReader.IsConfigured(getApplicationContext()))) {
+        boolean isDexbridge = CollectionServiceStarter.isDexbridge(getApplicationContext());
+        if(((isBTWixel || isDexbridge) && ActiveBluetoothDevice.first() != null) || ((!isBTWixel || !isDexbridge) && WixelReader.IsConfigured(getApplicationContext()))) {
             if (Sensor.isActive() && (Sensor.currentSensor().started_at + (60000 * 60 * 2)) < new Date().getTime()) {
                 if (BgReading.latest(2).size() > 1) {
                     List<Calibration> calibrations = Calibration.latest(2);
@@ -194,7 +196,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
                 notificationText.setText("Now start your sensor");
             }
         } else {
-            if(isBTWixel) {
+            if((isBTWixel || isDexbridge)) {
                 if((android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)) {
                     notificationText.setText("First pair with your BT device");
                 } else {
@@ -214,11 +216,21 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
 
         final TextView currentBgValueText = (TextView)findViewById(R.id.currentBgValueRealTime);
         final TextView notificationText = (TextView)findViewById(R.id.notices);
+        final TextView currentWixelBatteryText = (TextView) findViewById(R.id.currentWixelBattery);
+        final TextView displayIOB = (TextView) findViewById(R.id.iob);
+        final TextView displayCOB = (TextView) findViewById(R.id.cob);
+
         if ((currentBgValueText.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
             currentBgValueText.setPaintFlags(currentBgValueText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
         BgReading lastBgreading = BgReading.lastNoSenssor();
         boolean predictive = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("predictive_bg", false);
+
+        if (Math.round((float) lastBgreading.sensor.wixel_battery_level) > 0){
+            currentWixelBatteryText.setText("Bridge Power: " + Math.round((float) lastBgreading.sensor.wixel_battery_level) + "%");}
+        else{
+            currentWixelBatteryText.setText("Bridge Power: 0%");}
+
             if (lastBgreading != null) {
             double estimate = 0;
             if ((new Date().getTime()) - (60000 * 11) - lastBgreading.timestamp > 0) {
