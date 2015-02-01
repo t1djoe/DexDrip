@@ -71,10 +71,8 @@ public class WixelReader  extends Thread {
 
     public static boolean IsConfigured(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String receiversIpAddresses = prefs.getString("wifi_receivers_addresses", "");
-        if(receiversIpAddresses == null || receiversIpAddresses.equals("") ) {
-            return false;
-        }
+        String receiversIpAddresses = prefs.getString("wifi_recievers_addresses", "");
+        if(receiversIpAddresses == null || receiversIpAddresses.equals("") ) return false;
         return true;
     }
 
@@ -305,7 +303,7 @@ public class WixelReader  extends Thread {
         }
         catch(IOException e) {
             e.printStackTrace();
-            System.out.println("cought exception " + e.getMessage());
+            System.out.println("caught exception " + e.getMessage());
         }
         return trd_list;
     }
@@ -339,7 +337,7 @@ public class WixelReader  extends Thread {
                 Thread.sleep(30000);
             }
         } catch (InterruptedException e) {
-            // time to get out...
+            // time to get out...            
         }
     }
 
@@ -383,15 +381,14 @@ public class WixelReader  extends Thread {
         mStop = true;
         interrupt();
     }
-    public void setSerialDataToTransmitterRawData(int raw_data ,int sensor_battery_level,int wixel_battery_level, Long CaptureTime) {
+    public void setSerialDataToTransmitterRawData(int raw_data ,int sensor_battery_level, int wixel_battery_level, Long CaptureTime) {
 
         TransmitterData transmitterData = TransmitterData.create(raw_data, sensor_battery_level, wixel_battery_level, CaptureTime);
         if (transmitterData != null) {
             Sensor sensor = Sensor.currentSensor();
             if (sensor != null) {
-                BgReading bgReading = BgReading.create(transmitterData.raw_data, transmitterData.filtered_data, mContext);
+                BgReading bgReading = BgReading.create(transmitterData.raw_data,transmitterData.filtered_data, mContext);
                 sensor.latest_battery_level = transmitterData.sensor_battery_level;
-                sensor.wixel_battery_level = transmitterData.wixel_battery_level;
                 sensor.save();
             } else {
                 Log.w(TAG, "No Active Sensor, Data only stored in Transmitter Data");

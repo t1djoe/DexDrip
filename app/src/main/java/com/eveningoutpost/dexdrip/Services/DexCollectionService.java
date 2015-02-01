@@ -213,7 +213,8 @@ public class DexCollectionService extends Service {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     mConnectionState = STATE_CONNECTED;
                     Log.w(TAG, "Connected to GATT server.");
-                    Log.w(TAG, "Attempting to start service discovery: " + mBluetoothGatt.discoverServices());
+                    Log.w(TAG, "Attempting to start service discovery: " +
+                            mBluetoothGatt.discoverServices());
 
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     mConnectionState = STATE_DISCONNECTED;

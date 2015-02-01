@@ -53,7 +53,8 @@ public class TransmitterData extends Model {
             transmitterData.raw_data = txData.getInt(2);
             transmitterData.filtered_data =txData.getInt(6);
             transmitterData.sensor_battery_level = txData.getShort(10);
-            transmitterData.wixel_battery_level = (txData.get(11)) & 0xff;
+            //transmitterData.wixel_battery_level = (txData.get(11)) & 0xff;
+            transmitterData.wixel_battery_level = txData.get(11);
             Log.i(TAG, "Wix Batt: " + transmitterData.wixel_battery_level);
             transmitterData.timestamp = new Date().getTime();
             transmitterData.uuid = UUID.randomUUID().toString();

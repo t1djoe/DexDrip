@@ -103,6 +103,14 @@ public class BgReading extends Model {
     @Column(name = "sensor_uuid", index = true)
     public String sensor_uuid;
 
+    @Expose
+    @Column(name = "iob", index = true)
+    public double iob;
+
+    @Expose
+    @Column(name = "cob", index = true)
+    public double cob;
+
     @Column(name = "synced")
     public boolean synced;
 
@@ -138,12 +146,12 @@ public class BgReading extends Model {
     public static double activeSlope() {
         BgReading bgReading = BgReading.lastNoSenssor();
         double slope = (2 * bgReading.a * (new Date().getTime() + BESTOFFSET)) + bgReading.b;
-        Log.w(TAG, "ESTIMATE SLOPE" + slope);
+        Log.w(TAG, "ESTIMATE SLOPE " + slope);
         return slope;
     }
     public double staticSlope() {
         double slope = (2 * this.a * this.timestamp) + this.b;
-        Log.w(TAG, "ESTIMATE SLOPE" + slope);
+        Log.w(TAG, "ESTIMATE SLOPE " + slope);
         return slope;
     }
 
@@ -172,6 +180,8 @@ public class BgReading extends Model {
                 bgReading.timestamp = new Date().getTime();
                 bgReading.uuid = UUID.randomUUID().toString();
                 bgReading.time_since_sensor_started = bgReading.timestamp - sensor.started_at;
+                bgReading.iob = calc_iob();
+                bgReading.cob = calc_cob();
                 bgReading.synced = false;
                 bgReading.calibration_flag = false;
 
@@ -197,6 +207,8 @@ public class BgReading extends Model {
                 bgReading.timestamp = new Date().getTime();
                 bgReading.uuid = UUID.randomUUID().toString();
                 bgReading.time_since_sensor_started = bgReading.timestamp - sensor.started_at;
+                bgReading.iob = calc_iob();
+                bgReading.cob = calc_cob();
                 bgReading.synced = false;
 
                 //TODO: THIS IS A BIG SILLY IDEA, THIS WILL HAVE TO CHANGE ONCE WE GET SOME REAL DATA FROM THE START OF SENSOR LIFE
@@ -515,5 +527,19 @@ public class BgReading extends Model {
                 .serializeSpecialFloatingPointValues()
                 .create();
         return gson.toJson(this);
+    }
+
+    public static double calc_iob() {
+        List<Treatments> latestTreatments = Treatments.latest();
+        int listLength = latestTreatments.size();
+        Log.w(TAG, "listLength: " + listLength);
+        return(0);
+    }
+
+    public static double calc_cob() {
+        List<Treatments> latestTreatments = Treatments.latest();
+        int listLength = latestTreatments.size();
+        Log.w(TAG, "listLength: " + listLength);
+        return(0);
     }
 }

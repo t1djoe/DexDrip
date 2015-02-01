@@ -17,6 +17,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.internal.bind.DateTypeAdapter;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -80,6 +82,18 @@ public class Treatments extends Model {
 
         TreatmentSendQueue.addToQueue(treatment, "create", context);
         return(treatment);
+    }
+
+    public static List<Treatments> latest() {
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
+        Date treatDate = new Date();
+        treatDate.setTime((treatDate.getTime() - (4*60*60*1000)));
+        Log.w("treatDate: " + dateTimeFormat.format(treatDate), "treatDate");
+        return new Select()
+                .from(Treatments.class)
+                .where("treatment_time >= '" + dateTimeFormat.format(treatDate) + "'")
+                .orderBy("_ID desc")
+                .execute();
     }
 
 }

@@ -232,7 +232,12 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         if ((currentBgValueText.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
             currentBgValueText.setPaintFlags(currentBgValueText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
+
         BgReading lastBgreading = BgReading.lastNoSenssor();
+
+        //TODO: IOB-COB
+        //displayIOB.setText("IOB: " + Math.round((float) lastBgreading.iob) + "U");
+        //displayCOB.setText("COB: " + Math.round((float) lastBgreading.cob) + "g");
         boolean predictive = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("predictive_bg", false);
 
         if (Math.round((float) lastBgreading.sensor.wixel_battery_level) > 0){

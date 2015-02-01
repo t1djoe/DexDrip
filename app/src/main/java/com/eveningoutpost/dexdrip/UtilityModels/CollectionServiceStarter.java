@@ -39,7 +39,7 @@ public class CollectionServiceStarter {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         String collection_method = prefs.getString("dex_collection_method", "BluetoothWixel");
 
-        if(isBTWixel(context)) {
+        if(isBTWixel(context) || isDexbridge(context)) {
             stopWifWixelThread();
             startBtWixelService();
         } else {
