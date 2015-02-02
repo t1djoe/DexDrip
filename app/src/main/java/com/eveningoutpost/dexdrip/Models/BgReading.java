@@ -9,7 +9,10 @@ import android.util.Log;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import android.preference.PreferenceManager;
+import android.content.Context;
 import com.activeandroid.query.Select;
+import com.eveningoutpost.dexdrip.R;
 import com.eveningoutpost.dexdrip.Sensor;
 import com.eveningoutpost.dexdrip.UtilityModels.BgSendQueue;
 import com.eveningoutpost.dexdrip.UtilityModels.Constants;
@@ -26,6 +29,7 @@ import java.util.UUID;
 
 @Table(name = "BgReadings", id = BaseColumns._ID)
 public class BgReading extends Model {
+
     private final static String TAG = BgReading.class.getSimpleName();
     //TODO: Have these as adjustable settings!!
     public final static double BESTOFFSET = (60000 * 0); // Assume readings are about x minutes off from actual!
@@ -103,14 +107,6 @@ public class BgReading extends Model {
     @Column(name = "sensor_uuid", index = true)
     public String sensor_uuid;
 
-    @Expose
-    @Column(name = "iob", index = true)
-    public double iob;
-
-    @Expose
-    @Column(name = "cob", index = true)
-    public double cob;
-
     @Column(name = "synced")
     public boolean synced;
 
@@ -180,8 +176,6 @@ public class BgReading extends Model {
                 bgReading.timestamp = new Date().getTime();
                 bgReading.uuid = UUID.randomUUID().toString();
                 bgReading.time_since_sensor_started = bgReading.timestamp - sensor.started_at;
-                bgReading.iob = calc_iob();
-                bgReading.cob = calc_cob();
                 bgReading.synced = false;
                 bgReading.calibration_flag = false;
 
@@ -207,8 +201,6 @@ public class BgReading extends Model {
                 bgReading.timestamp = new Date().getTime();
                 bgReading.uuid = UUID.randomUUID().toString();
                 bgReading.time_since_sensor_started = bgReading.timestamp - sensor.started_at;
-                bgReading.iob = calc_iob();
-                bgReading.cob = calc_cob();
                 bgReading.synced = false;
 
                 //TODO: THIS IS A BIG SILLY IDEA, THIS WILL HAVE TO CHANGE ONCE WE GET SOME REAL DATA FROM THE START OF SENSOR LIFE
@@ -536,10 +528,4 @@ public class BgReading extends Model {
         return(0);
     }
 
-    public static double calc_cob() {
-        List<Treatments> latestTreatments = Treatments.latest();
-        int listLength = latestTreatments.size();
-        Log.w(TAG, "listLength: " + listLength);
-        return(0);
-    }
 }

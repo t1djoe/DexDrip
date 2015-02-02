@@ -85,14 +85,13 @@ public class Treatments extends Model {
     }
 
     public static List<Treatments> latest() {
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.sss");
         Date treatDate = new Date();
-        treatDate.setTime((treatDate.getTime() - (4*60*60*1000)));
-        Log.w("treatDate: " + dateTimeFormat.format(treatDate), "treatDate");
+        treatDate.setTime((treatDate.getTime() - (72*60*60*1000)));
+        Log.w("treatDate: " + treatDate.getTime(), "treatDate");
         return new Select()
                 .from(Treatments.class)
-                .where("treatment_time >= '" + dateTimeFormat.format(treatDate) + "'")
-                .orderBy("_ID desc")
+                .where("treatment_time >= " + treatDate.getTime())
+                .orderBy("_ID")
                 .execute();
     }
 

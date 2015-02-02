@@ -56,6 +56,10 @@ public class SettingsActivity extends PreferenceActivity {
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_wifi);
 
+        fakeHeader = new PreferenceCategory(this);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_iob_cob);
+
         bindPreferenceSummaryToValue(findPreference("highValue"));
         bindPreferenceSummaryToValue(findPreference("lowValue"));
         bindPreferenceSummaryToValue(findPreference("bg_snooze"));
