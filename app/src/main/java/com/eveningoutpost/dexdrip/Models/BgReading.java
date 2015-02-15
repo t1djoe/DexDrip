@@ -145,6 +145,7 @@ public class BgReading extends Model {
         Log.w(TAG, "ESTIMATE SLOPE " + slope);
         return slope;
     }
+
     public double staticSlope() {
         double slope = (2 * this.a * this.timestamp) + this.b;
         Log.w(TAG, "ESTIMATE SLOPE " + slope);
@@ -528,4 +529,15 @@ public class BgReading extends Model {
         return(0);
     }
 
+    public String getWixelBatteryLevel(Context appContext) {
+        TransmitterData lastTXData = TransmitterData.last();
+        float minimumBatterySetting = Float.valueOf(PreferenceManager.getDefaultSharedPreferences(appContext).getString("min_batt","2545"));
+        float maximumBatterySetting = Float.valueOf(PreferenceManager.getDefaultSharedPreferences(appContext).getString("max_batt","2888"));
+
+        if (lastTXData.wixel_battery_level == -1){
+            return "Missing Value";
+        } else {
+            return Integer.toString(Math.round((lastTXData.wixel_battery_level - minimumBatterySetting) / (maximumBatterySetting - minimumBatterySetting) * 100));
+        }
+    }
 }

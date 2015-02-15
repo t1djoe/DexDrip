@@ -1,8 +1,10 @@
 package com.eveningoutpost.dexdrip;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -13,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.eveningoutpost.dexdrip.Models.ActiveBluetoothDevice;
@@ -241,7 +244,6 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         df.setMaximumFractionDigits(0);
         DecimalFormat obdf = new DecimalFormat("#.#");
         obdf.setMaximumFractionDigits(1);
-        //double[] iob_cob = new double[1,2];
         final TextView currentBgValueText = (TextView)findViewById(R.id.currentBgValueRealTime);
         final TextView notificationText = (TextView)findViewById(R.id.notices);
         final TextView currentWixelBatteryText = (TextView) findViewById(R.id.currentWixelBattery);
@@ -250,6 +252,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
 
         if ((currentBgValueText.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
             currentBgValueText.setPaintFlags(currentBgValueText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            currentWixelBatteryText.setPaintFlags((currentWixelBatteryText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG)));
         }
 
         BgReading lastBgreading = BgReading.lastNoSenssor();
@@ -257,13 +260,47 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         calcIobCob(lastBgreading.calculated_value);
         displayIOB.setText("IOB: " + obdf.format(iob) + "U");
         displayCOB.setText("COB: " + obdf.format(cob) + "g");
-        boolean predictive = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("predictive_bg", false);
+
+        if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == false) {
+            currentWixelBatteryText.setVisibility(View.INVISIBLE);
+        } else {
+            currentWixelBatteryText.setVisibility(View.VISIBLE);
+        }
+
+        if (prefs.getBoolean("preventSleep",false)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }   else {
+            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) < 15 && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == true) {
+            AlertDialog wixelAlertDialog = new AlertDialog.Builder(this).create();
+            wixelAlertDialog.setTitle("Warning");
+            wixelAlertDialog.setMessage("DexDrip battery is less than 15%");
+            wixelAlertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog,
+                                    int which) {
+                    dialog.dismiss();
+                }
+            });
+            wixelAlertDialog.show();
+        }
 
         if (Math.round((float) lastBgreading.sensor.wixel_battery_level) > 0){
             currentWixelBatteryText.setText("Bridge Power: " + Math.round((float) lastBgreading.sensor.wixel_battery_level) + "%");}
         else{
             currentWixelBatteryText.setText("Bridge Power: 0%");}
 
+        if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) <= 50 && Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) >= 15) {
+            currentWixelBatteryText.setTextColor(Color.YELLOW);
+        } else if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) < 15) {
+            currentWixelBatteryText.setTextColor(Color.RED);
+        } else {
+            currentWixelBatteryText.setTextColor(Color.GREEN);
+        }
+
+        boolean predictive = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("predictive_bg", false);
             if (lastBgreading != null) {
             double estimate = 0;
             if ((new Date().getTime()) - (60000 * 11) - lastBgreading.timestamp > 0) {
