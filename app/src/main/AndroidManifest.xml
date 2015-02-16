@@ -40,7 +40,7 @@
             android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME"/>
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -94,6 +94,11 @@
             android:name=".Tables.CalibrationDataTable"
             android:label="@string/title_activity_calibration_data_table" >
         </activity>
+-        <service
+-            android:name=".ImportedLibraries.dexcom.SyncingService"
+-            android:enabled="true"
+-            android:exported="true" >
+-        </service>
 
         <service
             android:name=".Services.SyncService"
