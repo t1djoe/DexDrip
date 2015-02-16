@@ -489,9 +489,14 @@ public class DexCollectionService extends Service {
                 //All is OK, so process it.
                 //first, tell the wixel it is OK to sleep.
                 Log.d(TAG,"Sending Data packet Ack, to put wixel to sleep");
-                ByteBuffer ackMessage = ByteBuffer.allocate(2);
-                ackMessage.put(0, (byte)0x02);
-                ackMessage.put(1, (byte)0xF0);
+                int battMin = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("min_batt", "0"));
+                int battMax = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("max_batt", "0"));
+                ByteBuffer ackMessage = ByteBuffer.allocate(4);
+                ackMessage.order(ByteOrder.LITTLE_ENDIAN);
+                ackMessage.put(0, (byte)0x04);
+                ackMessage.put(1, (byte)battMin);
+                ackMessage.put(2, (byte)battMax);
+                ackMessage.put(3, (byte)0xF0);
                 sendBtMessage(ackMessage);
             }
         }

@@ -31,7 +31,7 @@ public class Sensor extends Model {
     public int latest_battery_level;
 
     @Column(name = "wixel_battery_level")
-    public int wixel_battery_level;
+    public float wixel_battery_level;
 
 //    @Expose
     @Column(name = "uuid", index = true)

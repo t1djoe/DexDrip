@@ -33,7 +33,7 @@ public class TransmitterData extends Model {
     public int sensor_battery_level;
 
     @Column(name = "wixel_battery_level")
-    public int wixel_battery_level;
+    public float wixel_battery_level;
 
     @Column(name = "uuid", index = true)
     public String uuid;
@@ -53,8 +53,8 @@ public class TransmitterData extends Model {
             transmitterData.raw_data = txData.getInt(2);
             transmitterData.filtered_data =txData.getInt(6);
             transmitterData.sensor_battery_level = txData.getShort(10);
-            //transmitterData.wixel_battery_level = (txData.get(11)) & 0xff;
-            transmitterData.wixel_battery_level = txData.get(11);
+            transmitterData.wixel_battery_level = (txData.get(11)) & 0xff;
+            //transmitterData.wixel_battery_level = txData.get(11);
             Log.i(TAG, "Wix Batt: " + transmitterData.wixel_battery_level);
             transmitterData.timestamp = new Date().getTime();
             transmitterData.uuid = UUID.randomUUID().toString();
@@ -91,7 +91,7 @@ public class TransmitterData extends Model {
             @jstevensog
              */
             transmitterData.raw_data = Integer.parseInt(data[0]);
-            transmitterData.wixel_battery_level = Integer.parseInt(data[2]);
+            transmitterData.wixel_battery_level = Float.parseFloat(data[2]);
             // transmitterData.filtered_data = 0;
             transmitterData.timestamp = new Date().getTime();
             transmitterData.uuid = UUID.randomUUID().toString();
@@ -102,7 +102,7 @@ public class TransmitterData extends Model {
         }
     }
 
-    public static TransmitterData create(int raw_data ,int sensor_battery_level, int wixel_battery_level, long timestamp) {
+    public static TransmitterData create(int raw_data ,int sensor_battery_level, float wixel_battery_level, long timestamp) {
         //randomDelay(100, 2000);
         TransmitterData lastTransmitterData = TransmitterData.last();
         if (lastTransmitterData != null && lastTransmitterData.raw_data == raw_data && Math.abs(lastTransmitterData.timestamp - new Date().getTime()) < (10000)) { //Stop allowing duplicate data, its bad!

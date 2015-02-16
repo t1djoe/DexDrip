@@ -66,6 +66,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     public double activityContrib;
     public double activity;
     public double insulinActivity;
+    public boolean isShown = false;
 
     public BgGraphBuilder bgGraphBuilder;
     BroadcastReceiver _broadcastReceiver;
@@ -273,28 +274,41 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
             getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) < 15 && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == true) {
-            AlertDialog wixelAlertDialog = new AlertDialog.Builder(this).create();
-            wixelAlertDialog.setTitle("Warning");
-            wixelAlertDialog.setMessage("DexDrip battery is less than 15%");
-            wixelAlertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog,
-                                    int which) {
-                    dialog.dismiss();
+        //if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) < 15 && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == true) {
+        if ((lastBgreading.sensor.wixel_battery_level) < 15 && PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == true) {
+            if (!isShown) {
+                isShown = true;
+                AlertDialog wixelAlertDialog = new AlertDialog.Builder(this).create();
+                wixelAlertDialog.setTitle("Warning");
+                    wixelAlertDialog.setMessage("Wixel battery is less than 15%");
+                    wixelAlertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,
+                                            int which) {
+                            isShown = false;
+                            dialog.dismiss();
+                        }
+                    });
+                    wixelAlertDialog.show();
                 }
-            });
-            wixelAlertDialog.show();
-        }
+            }
 
         if (Math.round((float) lastBgreading.sensor.wixel_battery_level) > 0){
-            currentWixelBatteryText.setText("Bridge Power: " + Math.round((float) lastBgreading.sensor.wixel_battery_level) + "%");}
+            int battMin = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("min_batt", "0"));
+            Log.i("Home", "wix battMin = " + battMin);
+            int battMax = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("max_batt", "0"));
+            Log.i("Home", "wix battMax = " + battMax);
+            float battPct = 100*((lastBgreading.sensor.wixel_battery_level-battMin)/(battMax-battMin));
+            DecimalFormat fmt = new DecimalFormat();
+            fmt.setMinimumFractionDigits(1);
+            fmt.setMaximumFractionDigits(1);
+            currentWixelBatteryText.setText("Bridge Power: " + fmt.format(battPct) + "%");}
         else{
             currentWixelBatteryText.setText("Bridge Power: 0%");}
 
-        if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) <= 50 && Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) >= 15) {
+        if ((lastBgreading.sensor.wixel_battery_level >= 15) && (lastBgreading.sensor.wixel_battery_level <= 50)) {
             currentWixelBatteryText.setTextColor(Color.YELLOW);
-        } else if (Integer.parseInt(lastBgreading.getWixelBatteryLevel(getApplicationContext())) < 15) {
+        } else if (lastBgreading.sensor.wixel_battery_level < 15) {
             currentWixelBatteryText.setTextColor(Color.RED);
         } else {
             currentWixelBatteryText.setTextColor(Color.GREEN);
