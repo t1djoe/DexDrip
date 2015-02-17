@@ -13,23 +13,5 @@
             android:title="Display DexDrip Battery Level"
             android:key="display_dd_batt"
             android:defaultValue="false" />
-        <CheckBoxPreference
-            android:title="Advanced Options"
-            android:key="advanced_opts"
-            android:defaultValue="false" />
-        <EditTextPreference
-            android:title="Max Battery Value"
-            android:key="max_batt"
-            android:defaultValue="2888"
-            android:summary="The maximum millivolt value for your voltage divider if you didn't use the documented resistors"
-            android:dependency="advanced_opts"
-            android:numeric="integer"/>
-        <EditTextPreference
-            android:title="Minimum Battery Value"
-            android:key="min_batt"
-            android:defaultValue="2545"
-            android:summary="The minimum millivolt value for your voltage divider if you didn't use the documented resistors"
-            android:dependency="advanced_opts"
-            android:numeric="integer"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -294,15 +294,10 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
             }
 
         if (Math.round((float) lastBgreading.sensor.wixel_battery_level) > 0){
-            int battMin = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("min_batt", "0"));
-            Log.i("Home", "wix battMin = " + battMin);
-            int battMax = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("max_batt", "0"));
-            Log.i("Home", "wix battMax = " + battMax);
-            float battPct = 100*((lastBgreading.sensor.wixel_battery_level-battMin)/(battMax-battMin));
             DecimalFormat fmt = new DecimalFormat();
             fmt.setMinimumFractionDigits(1);
             fmt.setMaximumFractionDigits(1);
-            currentWixelBatteryText.setText("Bridge Power: " + fmt.format(battPct) + "%");}
+            currentWixelBatteryText.setText("Bridge Power: " + fmt.format(lastBgreading.sensor.wixel_battery_level) + "%");}
         else{
             currentWixelBatteryText.setText("Bridge Power: 0%");}
 

@@ -76,8 +76,6 @@ public class SettingsActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(findPreference("dex_txid"));
         bindPreferenceSummaryToValue(findPreference("wifi_recievers_addresses"));
         bindPreferenceSummaryToValue(findPreference("units"));
-        bindPreferenceSummaryToValue(findPreference("max_batt"));
-        bindPreferenceSummaryToValue(findPreference("min_batt"));
     }
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {

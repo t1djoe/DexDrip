@@ -43,7 +43,7 @@ public class TransmitterData extends Model {
         if (len < 6) { return null; }
         Log.w(TAG, "buffer[0]: " + buffer[0]);
         Log.w(TAG, "buffer[1]: " + buffer[1]);
-        if (buffer[0] == 0x11 && buffer[1] == 0x00) {
+        if (buffer[0] == 0x12 && buffer[1] == 0x00) {
             //this is a dexbridge packet.  Process accordingly.
             Log.w(TAG, "create Processing a Dexbridge packet");
             ByteBuffer txData = ByteBuffer.allocate(len);
@@ -51,9 +51,11 @@ public class TransmitterData extends Model {
             txData.put(buffer, 0, len);
             TransmitterData transmitterData = new TransmitterData();
             transmitterData.raw_data = txData.getInt(2);
+            Log.i(TAG, "Raw Data: " + transmitterData.raw_data);
             transmitterData.filtered_data =txData.getInt(6);
+            Log.i(TAG, "Filtered Data: " + transmitterData.filtered_data);
             transmitterData.sensor_battery_level = txData.getShort(10);
-            transmitterData.wixel_battery_level = (txData.get(11)) & 0xff;
+            transmitterData.wixel_battery_level = txData.getInt(11);
             //transmitterData.wixel_battery_level = txData.get(11);
             Log.i(TAG, "Wix Batt: " + transmitterData.wixel_battery_level);
             transmitterData.timestamp = new Date().getTime();
@@ -135,4 +137,12 @@ public class TransmitterData extends Model {
             Log.e("Random Delay ", "INTERUPTED");
         }
     }*/
+    public static int toInt(byte[] bytes, int offset) {
+        int ret = 0;
+        for (int i = 0; i < 4 && i + offset < bytes.length; i++) {
+            ret <<= 8;
+            ret |= (int) bytes[i] & 0xFF;
+        }
+        return ret;
+    }
 }
