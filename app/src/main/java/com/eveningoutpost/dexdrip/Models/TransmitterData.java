@@ -43,7 +43,8 @@ public class TransmitterData extends Model {
         if (len < 6) { return null; }
         Log.w(TAG, "buffer[0]: " + buffer[0]);
         Log.w(TAG, "buffer[1]: " + buffer[1]);
-        if (buffer[0] == 0x12 && buffer[1] == 0x00) {
+//        if (buffer[0] == 0x12 && buffer[1] == 0x00) {
+        if (buffer[0] == 18 && buffer[1] == 0x00) {
             //this is a dexbridge packet.  Process accordingly.
             Log.w(TAG, "create Processing a Dexbridge packet");
             ByteBuffer txData = ByteBuffer.allocate(len);

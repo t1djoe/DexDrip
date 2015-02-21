@@ -451,6 +451,8 @@ public class DexCollectionService extends Service {
             tmpBuffer.put(buffer, 0, len);
             ByteBuffer txidMessage = ByteBuffer.allocate(6);
             txidMessage.order(ByteOrder.LITTLE_ENDIAN);
+            Log.w(TAG, "buffer[0]: " + buffer[0]);
+            Log.w(TAG, "buffer[1]: " + buffer[1]);
             if (buffer[0] == 0x07 && buffer[1] == -15) {
                 //We have a Beacon packet.  Get the TXID value and compare with dex_txid
                 Log.w(TAG, "setSerialDataToTransmitterRawData Received Beacon packet.");
