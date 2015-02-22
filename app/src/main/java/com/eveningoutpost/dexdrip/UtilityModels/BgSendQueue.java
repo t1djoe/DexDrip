@@ -92,6 +92,11 @@ public class BgSendQueue extends Model {
             intent.putExtras(bundle);
             context.sendBroadcast(intent, Intents.RECEIVER_PERMISSION);
         }
+
+        if(prefs.getBoolean("broadcast_to_pebble", false)) {
+            PebbleSync pebbleSync = new PebbleSync();
+            pebbleSync.sendData(context, bgReading);
+        }
     }
 
     public void markMongoSuccess() {

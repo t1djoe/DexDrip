@@ -39,6 +39,12 @@ public class SyncService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        setRetryTimer();
+        Log.w("SYNC SERVICE", "SERVICE STOPPED");
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }

@@ -192,7 +192,6 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         final TextView currentBgValueText = (TextView) findViewById(R.id.currentBgValueRealTime);
         final TextView currentWixelBatteryText = (TextView) findViewById(R.id.currentWixelBattery);
         final TextView notificationText = (TextView)findViewById(R.id.notices);
-
         notificationText.setText("");
         boolean isBTWixel = CollectionServiceStarter.isBTWixel(getApplicationContext());
         boolean isDexbridge = CollectionServiceStarter.isDexbridge(getApplicationContext());
@@ -240,7 +239,6 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     }
 
     public void displayCurrentInfo() {
-
         DecimalFormat df = new DecimalFormat("#");
         df.setMaximumFractionDigits(0);
         DecimalFormat obdf = new DecimalFormat("#.#");
