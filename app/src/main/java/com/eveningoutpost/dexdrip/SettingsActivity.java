@@ -64,8 +64,10 @@ public class SettingsActivity extends PreferenceActivity {
         getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_iob_cob);
 
+        bindPreferenceSummaryToValue(findPreference("urgentHighValue"));
         bindPreferenceSummaryToValue(findPreference("highValue"));
         bindPreferenceSummaryToValue(findPreference("lowValue"));
+        bindPreferenceSummaryToValue(findPreference("urgentLowValue"));
         bindPreferenceSummaryToValue(findPreference("bg_snooze"));
         bindPreferenceSummaryToValue(findPreference("calibration_snooze"));
         bindPreferenceSummaryToValue(findPreference("cloud_storage_mongodb_uri"));
