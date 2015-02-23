@@ -542,17 +542,25 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         int delay = 20;
         double carbs_min = carbs_hr / 60;
         Log.i("treatment.carbs: " + treatment.carbs, "CARBS");
+        Log.i("carbs_hr: " + carbs_hr, "CARBS");
+        Log.i("carbs_min: " + carbs_min, "CARBS");
         if (treatment.carbs > 0) {
             Date decayedBy = new Date(treatment.treatment_time);
-
-            long minutesleft = ((lastDecayedBy.getTime() - treatment.treatment_time) / 1000) / 60;
+            Date now = new Date();
+            long minutesToDecay = (long) (treatment.carbs / carbs_min);
+            Log.i("minutesToDecay: " + minutesToDecay, "CARBS");
+            long minutesSinceTreatment = (long) ((now.getTime() - decayedBy.getTime()) / 1000) / 60;
+            Log.i("minutesSinceTreatment: " + minutesSinceTreatment, "CARBS");
+            long minutesleft = minutesToDecay - minutesSinceTreatment;
+            Log.i("lastDecayedBy: " + lastDecayedBy.getTime(), "CARBS");
+            Log.i("treatment_time: " + treatment.treatment_time, "CARBS");
             Log.i("minutesleft: " + minutesleft, "CARBS");
             decayedBy.setMinutes((int) (decayedBy.getMinutes() + Math.max(delay, minutesleft) + (treatment.carbs / carbs_min)));
             Log.i("decayedBy: " + decayedBy.getTime(), "CARBS");
-            if (delay > minutesleft) {
+            if (delay > minutesSinceTreatment) {
                 initialCarbs = treatment.carbs;
             } else {
-                initialCarbs = treatment.carbs + minutesleft * carbs_min;
+                initialCarbs = (treatment.carbs / carbs_min) - minutesleft;
             }
             Log.i("initialCarbs: " + initialCarbs, "CARBS");
             Log.i("treatment.treatment_time: " + treatment.treatment_time, "CARBS");
