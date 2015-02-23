@@ -319,7 +319,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         boolean predictive = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("predictive_bg", false);
             if (lastBgreading != null) {
             double estimate = 0;
-            if ((new Date().getTime()) - (60000 * 11) - lastBgreading.timestamp > 0) {
+            if ((new Date().getTime()) - (60000 * 16) - lastBgreading.timestamp > 0) {
                 notificationText.setText("Signal Missed");
                 if(!predictive){
                     estimate=lastBgreading.calculated_value;
@@ -339,10 +339,14 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
                     currentBgValueText.setText( stringEstimate + " " + BgReading.slopeArrow());
                 }
             }
-            if(bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) {
-                currentBgValueText.setTextColor(Color.parseColor("#C30909"));
-            } else if(bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) {
-                currentBgValueText.setTextColor(Color.parseColor("#FFBB33"));
+            if((bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) && (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark) {
+                currentBgValueText.setTextColor(Utils.COLOR_YELLOW);
+            } else if((bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) && (bgGraphBuilder.unitized(estimate) < bgGraphBuilder.urgentHighMark)) {
+                currentBgValueText.setTextColor(Utils.COLOR_YELLOW);
+            } else if(bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.urgentHighMark) {
+                currentBgValueText.setTextColor(Utils.COLOR_RED);
+            } else if(bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.urgentLowMark) {
+                currentBgValueText.setTextColor(Utils.COLOR_RED);
             } else {
                 currentBgValueText.setTextColor(Color.WHITE);
             }
