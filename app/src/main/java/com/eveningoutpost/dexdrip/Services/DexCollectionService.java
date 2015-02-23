@@ -59,6 +59,7 @@ public class DexCollectionService extends Service {
     private String mDeviceAddress;
     private boolean is_connected = false;
     SharedPreferences prefs;
+    private static byte bridgeBattery = 0;
 
     public DexCollectionService dexCollectionService;
 
@@ -122,6 +123,18 @@ public class DexCollectionService extends Service {
         }
     }
 
+
+    public static byte getBridgeBattery(){
+        return bridgeBattery;
+    }
+
+    public boolean isUnitsMmol(){
+        return (PreferenceManager.getDefaultSharedPreferences(this).getString("units", "mmol").compareTo("mmol") !=0 );
+    }
+
+    public static String getBridgeBatteryAsString() {
+        return String.format("%d",bridgeBattery);
+    }
 
     //TODO: Move this somewhere more reusable
     public void listenForChangeInSettings() {

@@ -25,6 +25,7 @@ import com.eveningoutpost.dexdrip.Models.Treatments;
 import com.eveningoutpost.dexdrip.Services.WixelReader;
 import com.eveningoutpost.dexdrip.UtilityModels.BgGraphBuilder;
 import com.eveningoutpost.dexdrip.UtilityModels.CollectionServiceStarter;
+import com.eveningoutpost.dexdrip.UtilityModels.PebbleSync;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -71,9 +72,12 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     public BgGraphBuilder bgGraphBuilder;
     BroadcastReceiver _broadcastReceiver;
 
+    private static Context mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getApplicationContext();
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_bg_notification, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
@@ -117,6 +121,10 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         holdViewport.set(0, 0, 0, 0);
         setupCharts();
         updateCurrentBgInfo();
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 
     public void setupCharts() {
@@ -229,6 +237,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         }
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), menu_name, this);
+
     }
 
 
