@@ -155,20 +155,23 @@ public class BgGraphBuilder {
 
     private void addBgReadingValues() {
         for (BgReading bgReading : bgReadings) {
-            if (unitized(bgReading.calculated_value) >= urgentHighMark) {
-                urgentHighValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(400)));
-            } else if ((unitized(bgReading.calculated_value) >= highMark) && (unitized(bgReading.calculated_value) < urgentHighMark)){
-                highValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
-            } else if (unitized(bgReading.calculated_value) >= lowMark) {
-                inRangeValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
-            } else if (unitized(bgReading.calculated_value) >= urgentLowMark) {
-                lowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+            if ((unitized(bgReading.calculated_value) >= highMark) {
+                if (unitized(bgReading.calculated_value) >= urgentHighMark) {
+                    urgentHighValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(400)));
+                } else {
+                    highValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+                }
+            } else if (unitized(bgReading.calculated_value) <= lowMark) {
+                if (unitized(bgReading.calculated_value) <= urgentLowMark) {
+                    urgentLowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+                } else {
+                    lowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+                } 
             } else {
-                urgentLowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+                inRangeValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
             }
         }
     }
-
 
     public Line urgentHighLine() {
         List<PointValue> urgentHighLineValues = new ArrayList<PointValue>();
