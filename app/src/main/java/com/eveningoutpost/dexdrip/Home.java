@@ -25,7 +25,6 @@ import com.eveningoutpost.dexdrip.Models.Treatments;
 import com.eveningoutpost.dexdrip.Services.WixelReader;
 import com.eveningoutpost.dexdrip.UtilityModels.BgGraphBuilder;
 import com.eveningoutpost.dexdrip.UtilityModels.CollectionServiceStarter;
-import com.eveningoutpost.dexdrip.UtilityModels.PebbleSync;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -35,6 +34,7 @@ import java.util.List;
 import lecho.lib.hellocharts.ViewportChangeListener;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Viewport;
+import lecho.lib.hellocharts.util.Utils;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 
@@ -339,10 +339,10 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
                     currentBgValueText.setText( stringEstimate + " " + BgReading.slopeArrow());
                 }
             }
-            if((bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) && (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark) {
-                currentBgValueText.setTextColor(Utils.COLOR_YELLOW);
+            if((bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) && (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark)) {
+                currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
             } else if((bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) && (bgGraphBuilder.unitized(estimate) < bgGraphBuilder.urgentHighMark)) {
-                currentBgValueText.setTextColor(Utils.COLOR_YELLOW);
+                currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
             } else if(bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.urgentHighMark) {
                 currentBgValueText.setTextColor(Utils.COLOR_RED);
             } else if(bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.urgentLowMark) {

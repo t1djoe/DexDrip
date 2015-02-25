@@ -88,13 +88,13 @@ public class Notifications {
         BgReading bgReading = bgReadings.get(0);
 
         if (bg_notifications && sensor != null) {
-            if ((bgGraphBuilder.unitized(bgReading.calculated_value) >= high || (bgGraphBuilder.unitized(bgReading.calculated_value) <= low || (bgGraphBuilder.unitized(bgReading.calculated_value) >= urgentHigh || (bgGraphBuilder.unitized(bgReading.calculated_value) <= urgentLow){
+            if ((bgGraphBuilder.unitized(bgReading.calculated_value) >= high) || (bgGraphBuilder.unitized(bgReading.calculated_value) <= low) || (bgGraphBuilder.unitized(bgReading.calculated_value) >= urgentHigh) || (bgGraphBuilder.unitized(bgReading.calculated_value) <= urgentLow)){
                 
                 int alertType = 0;
-                if (bgGraphBuilder.unitized(bgReading.calculated_value)) >= urgentHigh {alertType = 1;}
-                else if (bgGraphBuilder.unitized(bgReading.calculated_value)) >= high && (bgGraphBuilder.unitized(bgReading.calculated_value)) < urgentHigh {alertType = 2;}
-                else if (bgGraphBuilder.unitized(bgReading.calculated_value)) <= low && (bgGraphBuilder.unitized(bgReading.calculated_value)) > urgentLow {alertType = 3;}
-                else if (bgGraphBuilder.unitized(bgReading.calculated_value)) < urgentLow {alertType = 4;}
+                if ((bgGraphBuilder.unitized(bgReading.calculated_value)) >= urgentHigh) {alertType = 1;}
+                else if ((bgGraphBuilder.unitized(bgReading.calculated_value)) >= high && (bgGraphBuilder.unitized(bgReading.calculated_value)) < urgentHigh) {alertType = 2;}
+                else if ((bgGraphBuilder.unitized(bgReading.calculated_value)) <= low && (bgGraphBuilder.unitized(bgReading.calculated_value)) > urgentLow) {alertType = 3;}
+                else if ((bgGraphBuilder.unitized(bgReading.calculated_value)) < urgentLow) {alertType = 4;}
                 else {alertType = -1;}
                 bgAlert(bgReading.displayValue(mContext), bgReading.slopeArrow(), alertType);
             } else {
@@ -200,28 +200,32 @@ public class Notifications {
     public static void bgAlert(String value, String slopeArrow, int alertType) {
         UserNotification userNotification = UserNotification.lastBgAlert();
         
-        if (alertType > 1) || (alertType < 3){
+        if ((alertType > 1) || (alertType < 3)) {
             if ((userNotification == null) || (userNotification.timestamp <= ((new Date().getTime()) - (60000 * bg_snooze)))) {
-                if (userNotification != null) { userNotification.delete(); }
+                if (userNotification != null) {
+                    userNotification.delete();
+                }
                 UserNotification newUserNotification = UserNotification.create(value + " " + slopeArrow, "bg_alert");
                 String title = value + " " + slopeArrow;
                 String content = "BG LEVEL ALERT: " + value + " " + slopeArrow;
                 Intent intent = new Intent(mContext, Home.class);
                 bgNotificationCreate(title, content, intent, BgNotificationId);
 
-            } else if ((userNotification != null) && (userNotification.timestamp >= ((new Date().getTime()) - (60000 * bg_snooze))))  {
+            } else if ((userNotification != null) && (userNotification.timestamp >= ((new Date().getTime()) - (60000 * bg_snooze)))) {
                 String title = value + " " + slopeArrow;
                 String content = "BG LEVEL ALERT: " + value + " " + slopeArrow;
                 Intent intent = new Intent(mContext, Home.class);
                 notificationUpdate(title, content, intent, BgNotificationId);
+            } else if ((alertType == 1) || (alertType == 4)) {
+                if (userNotification != null) {
+                    userNotification.delete();
+                    UserNotification newUserNotification = UserNotification.create(value + " " + slopeArrow, "bg_alert");
+                    String title = value + " " + slopeArrow;
+                    String content = "BG LEVEL ALERT: " + value + " " + slopeArrow;
+                    Intent intent = new Intent(mContext, Home.class);
+                    bgNotificationCreate(title, content, intent, BgNotificationId);
+                }
             }
-        else if (alertType == 1) || (alertType == 4){
-            if (userNotification != null) { userNotification.delete();
-            UserNotification newUserNotification = UserNotification.create(value + " " + slopeArrow, "bg_alert");
-            String title = value + " " + slopeArrow;
-            String content = "BG LEVEL ALERT: " + value + " " + slopeArrow;
-            Intent intent = new Intent(mContext, Home.class);
-            bgNotificationCreate(title, content, intent, BgNotificationId);
         }
     }
 

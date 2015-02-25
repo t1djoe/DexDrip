@@ -110,7 +110,7 @@ public class BgGraphBuilder {
 
     public Line highValuesLine() {
         Line highValuesLine = new Line(highValues);
-        highValuesLine.setColor(Utils.COLOR_YELLOW);
+        highValuesLine.setColor(Utils.COLOR_ORANGE);
         highValuesLine.setHasLines(false);
         highValuesLine.setPointRadius(pointSize);
         highValuesLine.setHasPoints(true);
@@ -128,7 +128,7 @@ public class BgGraphBuilder {
 
     public Line lowValuesLine() {
         Line lowValuesLine = new Line(lowValues);
-        lowValuesLine.setColor(Utils.COLOR_YELLOW));
+        lowValuesLine.setColor(Utils.COLOR_ORANGE);
         lowValuesLine.setHasLines(false);
         lowValuesLine.setPointRadius(pointSize);
         lowValuesLine.setHasPoints(true);
@@ -188,7 +188,7 @@ public class BgGraphBuilder {
         Line highLine = new Line(highLineValues);
         highLine.setHasPoints(false);
         highLine.setStrokeWidth(1);
-        highLine.setColor(Utils.COLOR_YELLOW);
+        highLine.setColor(Utils.COLOR_ORANGE);
         return highLine;
     }
 
@@ -199,7 +199,7 @@ public class BgGraphBuilder {
         Line lowLine = new Line(lowLineValues);
         lowLine.setHasPoints(false);
         lowLine.setAreaTransparency(50);
-        lowLine.setColor(Utils.COLOR_YELLOW);
+        lowLine.setColor(Utils.COLOR_ORANGE);
         lowLine.setStrokeWidth(1);
         lowLine.setFilled(true);
         return lowLine;
