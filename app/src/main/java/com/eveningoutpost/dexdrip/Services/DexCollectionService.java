@@ -15,6 +15,7 @@
  */
 package com.eveningoutpost.dexdrip.Services;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -52,7 +53,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 
-
+@TargetApi(android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class DexCollectionService extends Service {
     private final static String TAG = DexCollectionService.class.getSimpleName();
     private String mDeviceName;
