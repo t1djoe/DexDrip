@@ -2,6 +2,8 @@ package com.eveningoutpost.dexdrip.Services;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import android.util.Log;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -24,7 +26,8 @@ public class MongoWrapper {
     String collection_;
     String index_;
     String machineName_;
-
+    private final static String TAG = WixelReader.class.getName();
+    
     public MongoWrapper(String dbUriStr, String collection, String index, String machineName) {
         dbUriStr_ = dbUriStr;
         // dbName is the last part of the string starting with /dbname
@@ -76,13 +79,13 @@ public class MongoWrapper {
             coll.insert(bdbo);
 
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            Log.e(TAG, "WriteToMongo caught UnknownHostException! ",e);
             return false;
         } catch (MongoException e) {
-            e.printStackTrace();
+            Log.e(TAG, "WriteToMongo caught MongoException! ", e);
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "WriteToMongo caught Exception! ", e);
             closeMongoDb();
             return false;
         }
@@ -101,11 +104,13 @@ public class MongoWrapper {
         TransmitterRawData lastTrd = null;
         try {
             coll = openMongoDb();
-            DBCursor cursor = coll.find();
+            BasicDBObject query = new BasicDBObject("RawValue", new BasicDBObject("$exists", true));
+            DBCursor cursor = coll.find(query);
             cursor.sort(new BasicDBObject("CaptureDateTime", -1));
             try {
                 while(cursor.hasNext() && trd_list.size() < numberOfRecords) {
                     //System.out.println(cursor.next());
+                    Log.e(TAG, "Read an object from mongodb");
                     TransmitterRawData trd = new TransmitterRawData((BasicDBObject)cursor.next());
                     // Do our best to fix the relative time...
                     trd.RelativeTime = new Date().getTime() - trd.CaptureDateTime;
@@ -128,14 +133,14 @@ public class MongoWrapper {
 
         } catch (UnknownHostException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "ReadFromMongo: caught UnknownHostException! ", e);
             return null;
         } catch (MongoException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.e(TAG, "ReadFromMongo: caught MongoException! " , e);
             return trd_list;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "ReadFromMongo: caught Exception! " , e);
             closeMongoDb();
             return null;
         }finally {
