@@ -507,7 +507,8 @@ public class DexCollectionService extends Service {
                 sendBtMessage(ackMessage);
             }
         }
-        TransmitterData transmitterData = TransmitterData.create(buffer, len);
+        Long timestamp = new Date().getTime();
+        TransmitterData transmitterData = TransmitterData.create(buffer, len, timestamp);
         if (transmitterData != null) {
             Sensor sensor = Sensor.currentSensor();
             if (sensor != null) {
@@ -516,7 +517,7 @@ public class DexCollectionService extends Service {
                 sensor.save();
 
                 //BgReading bgReading = BgReading.create(transmitterData.raw_data, this);
-                BgReading bgReading = BgReading.create(transmitterData.raw_data, transmitterData.filtered_data, this);
+                BgReading bgReading = BgReading.create(transmitterData.raw_data, this, timestamp);
             } else {
                 Log.w(TAG, "No Active Sensor, Data only stored in Transmitter Data");
             }
