@@ -27,10 +27,10 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="DIYPanc.db" />
+            android:value="DexDrip.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="12" />
+            android:value="21" />
 
         <!-- <provider android:authorities="com.example" android:exported="false" android:name="com.activeandroid.content.ContentProvider" /> -->
 
