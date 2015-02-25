@@ -50,7 +50,7 @@ import lecho.lib.hellocharts.view.PreviewLineChartView;
 
 
 public class Home extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-    private String menu_name = "DIYPanc";
+    private String menu_name = "DexDrip";
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private LineChartView chart;
     private PreviewLineChartView previewChart;
