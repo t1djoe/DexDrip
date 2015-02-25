@@ -28,7 +28,6 @@ import java.util.List;
 @Table(name = "Treatments", id = BaseColumns._ID)
 public class Treatments extends Model {
 
-
     @Expose
     @Column(name = "event_type")
     public String event_type;
