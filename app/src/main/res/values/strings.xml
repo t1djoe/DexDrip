@@ -37,7 +37,7 @@
     <string name="title_activity_usb_connected">UsbConnectedActivity</string>
 
     <string-array name="menu_options">
-        <item>DIYPanc</item>
+        <item>DexDrip</item>
         <item>Enter Calibration</item>
         <item>Calculated Data Table</item>
         <item>Raw Data Table</item>
