@@ -349,15 +349,20 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
                     currentBgValueText.setText( stringEstimate + " " + BgReading.slopeArrow());
                 }
             }
-            if((bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) && (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark)) {
-                currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
-            } else if((bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) && (bgGraphBuilder.unitized(estimate) < bgGraphBuilder.urgentHighMark)) {
-                currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
-            } else if(bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.urgentHighMark) {
-                currentBgValueText.setTextColor(Utils.COLOR_RED);
-            } else if(bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.urgentLowMark) {
-                currentBgValueText.setTextColor(Utils.COLOR_RED);
-            } else {
+
+            if((bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) {
+                if (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark)){
+                    currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
+                } else {
+                    currentBgValueText.setTextColor(Utils.COLOR_RED);
+                }
+            } else if((bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) {
+                if (bgGraphBuilder.unitized(estimate) < bgGraphBuilder.urgentHighMark)){
+                    currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
+                } else {
+                    currentBgValueText.setTextColor(Utils.COLOR_RED);
+                }
+            else {
                 currentBgValueText.setTextColor(Color.WHITE);
             }
         }
