@@ -38,7 +38,7 @@ public class AddTreatment extends Activity implements NavigationDrawerFragment.N
         String menu_name = "Add Treatment";
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), menu_name, this);
     }
-
+    
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         mNavigationDrawerFragment.swapContext(position);
