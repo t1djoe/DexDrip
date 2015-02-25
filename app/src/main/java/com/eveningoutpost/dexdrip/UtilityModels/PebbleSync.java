@@ -94,15 +94,16 @@ public class PebbleSync {
     public String bgDelta() {
         //String deltaString = bgGraphBuilder.unitized_string((mBgReading.calculated_value_slope * (5 * 60 * 1000)));
         String deltaString;
-        if((PreferenceManager.getDefaultSharedPreferences(mContext).getString("units","mgdl").compareTo("mgdl") == 0)) {
-            Log.v("PebbleSync","mg/dl");
-            deltaString = String.format("%.0f", mBgReading.calculated_value_slope * 360000);
-        } else {
-            Log.v("PebbleSync","mmol");
-            deltaString = String.format("%.1f", (mBgReading.calculated_value_slope * 360000)*Constants.MGDL_TO_MMOLL);
-        }
+        if ((((mBgReading.timestamp + offsetFromUTC) / 1000) - ((new Date().getTime() +offsetFromUTC) / 1000)) <= 0){
+            if((PreferenceManager.getDefaultSharedPreferences(mContext).getString("units","mgdl").compareTo("mgdl") == 0)) {
+                Log.v("PebbleSync","mg/dl");
+                deltaString = String.format("%.0f", mBgReading.calculated_value_slope * 360000);
+            } else {
+                Log.v("PebbleSync","mmol");
+                deltaString = String.format("%.1f", (mBgReading.calculated_value_slope * 360000)*Constants.MGDL_TO_MMOLL);
+            }
         //deltaString = bgGraphBuilder.unitized_string((mBgReading.calculated_value_slope * 360000));
-
+        }
         Log.v("PebbleSync","bgDelta: "+ deltaString);
         //if(mBgReading.calculated_value_slope > 0) {
         if(Float.valueOf(deltaString) > 0) {
