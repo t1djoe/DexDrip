@@ -91,24 +91,6 @@
                 android:text="Add Treatment"
                 android:onClick="addTreatment"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/iob"
-                android:textSize="16sp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentStart="true"
-                android:text="IOB: " />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/cob"
-                android:textSize="16sp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:text="COB: " />
-
         </RelativeLayout>
 
         <lecho.lib.hellocharts.view.PreviewLineChartView
