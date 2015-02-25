@@ -78,8 +78,11 @@ public class WixelReader  extends Thread {
 
     public static boolean almostEquals( TransmitterRawData e1, TransmitterRawData e2)
     {
+        if (e1 == null || e2==null) {
++            return false;
++        }
         // relative time is in ms
-        if ((Math.abs(e1.RelativeTime - e2.RelativeTime) < 120 * 1000 ) &&
+        if ((Math.abs(e1.CaptureDateTime - e2.CaptureDateTime) < 120 * 1000 ) &&
                 (e1.TransmissionId == e2.TransmissionId)) {
             return true;
         }
@@ -144,7 +147,7 @@ public class WixelReader  extends Thread {
             port = Integer.parseInt(hosts[1]);
         } catch (NumberFormatException nfe) {
             System.out.println("Invalid port " +hosts[1]);
-            Log.e(TAG, "Invalid hostAndIp " + hostAndIp);
+            Log.e(TAG, "Invalid hostAndIp " + hostAndIp, nfe);
             return null;
 
         }
@@ -161,7 +164,7 @@ public class WixelReader  extends Thread {
         } catch(Exception e) {
             // We had some error, need to move on...
             System.out.println("read from host failed cought expation" + hostAndIp);
-            Log.e(TAG, "read from host failed " + hostAndIp);
+            Log.e(TAG, "read from host failed " + hostAndIp, e);
 
             return null;
 
@@ -299,11 +302,10 @@ public class WixelReader  extends Thread {
             MySocket.close();
             return trd_list;
         }catch(SocketTimeoutException s) {
-            System.out.println("Socket timed out!...");
+            Log.e(TAG, "Socket timed out!...", s);
         }
         catch(IOException e) {
-            e.printStackTrace();
-            System.out.println("caught exception " + e.getMessage());
+            Log.e(TAG, "caught IOException! ", e);
         }
         return trd_list;
     }
@@ -311,7 +313,8 @@ public class WixelReader  extends Thread {
 
     public void run()
     {
-        Long LastReportedReading = new Date().getTime();
+        Long LastReportedTime = new Date().getTime();
+        TransmitterRawData LastReportedReading = null; 
         Log.e(TAG, "Starting... LastReportedReading " + LastReportedReading);
         try {
             while (!mStop && !interrupted()) {
@@ -326,17 +329,24 @@ public class WixelReader  extends Thread {
                     // Last in the array is the most updated reading we have.
                     TransmitterRawData LastReading = LastReadingArr[LastReadingArr.length -1];
 
-                    if (LastReading.CaptureDateTime > LastReportedReading + 5000) {
+                    //if (LastReading.CaptureDateTime > LastReportedReading + 5000) {
++	        		// Make sure we do not report packets from the far future...
++	        		if ((LastReading.CaptureDateTime > LastReportedTime ) &&
++	        		        (!almostEquals(LastReading, LastReportedReading)) &&
++	        		        LastReading.CaptureDateTime < new Date().getTime() + 12000) {
                         // We have a real new reading...
-                        Log.e(TAG, "calling setSerialDataToTransmitterRawData " + LastReading.RawValue);
+                        Log.e(TAG, "calling setSerialDataToTransmitterRawData " + LastReading.RawValue +
++	        			        " LastReading.CaptureDateTime " + LastReading.CaptureDateTime + " " + LastReading.TransmissionId);
                         setSerialDataToTransmitterRawData(LastReading.RawValue , LastReading.BatteryLife, LastReading.UploaderBatteryLife, LastReading.CaptureDateTime);
-                        LastReportedReading = LastReading.CaptureDateTime;
+                        LastReportedReading = LastReading;
++	        			LastReportedTime = LastReading.CaptureDateTime;
                     }
                 }
                 // let's sleep (right now for 30 seconds)
                 Thread.sleep(30000);
             }
         } catch (InterruptedException e) {
+            Log.e(TAG, "cought InterruptedException! ", e);
             // time to get out...            
         }
     }
@@ -387,7 +397,7 @@ public class WixelReader  extends Thread {
         if (transmitterData != null) {
             Sensor sensor = Sensor.currentSensor();
             if (sensor != null) {
-                BgReading bgReading = BgReading.create(transmitterData.raw_data,transmitterData.filtered_data, mContext);
+                BgReading bgReading = BgReading.create(transmitterData.raw_data, mContext, CaptureTime);
                 sensor.latest_battery_level = transmitterData.sensor_battery_level;
                 sensor.save();
             } else {
