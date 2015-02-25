@@ -39,7 +39,7 @@ public class TransmitterData extends Model {
     public String uuid;
 
 
-    public static TransmitterData create(byte[] buffer, int len) {
+    public static TransmitterData create(byte[] buffer, int len, Long timestamp) {
         if (len < 6) { return null; }
         Log.w(TAG, "buffer[0]: " + buffer[0]);
         Log.w(TAG, "buffer[1]: " + buffer[1]);
@@ -77,7 +77,7 @@ public class TransmitterData extends Model {
             String[] data = data_string.toString().split("\\s+");
             //randomDelay(100, 2000);
             TransmitterData lastTransmitterData = TransmitterData.last();
-            if (lastTransmitterData != null && lastTransmitterData.raw_data == Integer.parseInt(data[0]) && Math.abs(lastTransmitterData.timestamp - new Date().getTime()) < (10000)) { //Stop allowing duplicate data, its bad!
+            if (lastTransmitterData != null && lastTransmitterData.raw_data == Integer.parseInt(data[0]) && Math.abs(lastTransmitterData.timestamp - timestamp) < (10000)) { //Stop allowing duplicate data, its bad!
                 return null;
             }
 
@@ -96,7 +96,7 @@ public class TransmitterData extends Model {
             transmitterData.raw_data = Integer.parseInt(data[0]);
             transmitterData.wixel_battery_level = Float.parseFloat(data[2]);
             // transmitterData.filtered_data = 0;
-            transmitterData.timestamp = new Date().getTime();
+            transmitterData.timestamp = timestamp;
             transmitterData.uuid = UUID.randomUUID().toString();
 
             transmitterData.save();
