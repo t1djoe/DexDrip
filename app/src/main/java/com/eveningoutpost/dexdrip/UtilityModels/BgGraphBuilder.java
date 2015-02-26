@@ -155,7 +155,7 @@ public class BgGraphBuilder {
 
     private void addBgReadingValues() {
         for (BgReading bgReading : bgReadings) {
-            if ((unitized(bgReading.calculated_value) >= highMark) {
+            if (unitized(bgReading.calculated_value) >= highMark) {
                 if (unitized(bgReading.calculated_value) >= urgentHighMark) {
                     urgentHighValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(400)));
                 } else {

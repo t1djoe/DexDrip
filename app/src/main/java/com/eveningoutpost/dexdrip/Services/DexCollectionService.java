@@ -488,8 +488,8 @@ public class DexCollectionService extends Service {
             if (buffer[0] == 0x12 && buffer[1] == 0x00) {
                 //we have a data packet.  Check to see if the TXID is what we are expecting.
                 Log.w(TAG, "setSerialDataToTransmitterRawData Received Data packet");
-                //DexSrc starts at Byte 12 of a data packet.
-                DexSrc = tmpBuffer.getInt(12);
+                //DexSrc starts at Byte 14 of a data packet.
+                DexSrc = tmpBuffer.getInt(13);
                 TxId = PreferenceManager.getDefaultSharedPreferences(this).getString("dex_txid", "00000");
                 TransmitterID = convertSrc(TxId);
                 if (Integer.compare(DexSrc, TransmitterID) != 0) {
@@ -508,6 +508,7 @@ public class DexCollectionService extends Service {
                 sendBtMessage(ackMessage);
             }
         }
+        BgReading mBgReading = BgReading.last();
         Long timestamp = new Date().getTime();
         TransmitterData transmitterData = TransmitterData.create(buffer, len, timestamp);
         if (transmitterData != null) {
@@ -518,7 +519,10 @@ public class DexCollectionService extends Service {
                 sensor.save();
 
                 //BgReading bgReading = BgReading.create(transmitterData.raw_data, this);
-                BgReading bgReading = BgReading.create(transmitterData.raw_data, this, timestamp);
+                Log.w(TAG, "timestamp:  " + timestamp);
+                Log.w(TAG, "mBgReading: " + mBgReading.timestamp);
+                if (timestamp != mBgReading.timestamp) {
+                    BgReading bgReading = BgReading.create(transmitterData.raw_data,transmitterData.filtered_data, this, timestamp);}
             } else {
                 Log.w(TAG, "No Active Sensor, Data only stored in Transmitter Data");
             }

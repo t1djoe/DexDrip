@@ -13,11 +13,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -350,19 +353,19 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
                 }
             }
 
-            if((bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) {
-                if (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark)){
+            if(bgGraphBuilder.unitized(estimate) <= bgGraphBuilder.lowMark) {
+                if (bgGraphBuilder.unitized(estimate) > bgGraphBuilder.urgentLowMark){
                     currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
                 } else {
                     currentBgValueText.setTextColor(Utils.COLOR_RED);
                 }
-            } else if((bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) {
-                if (bgGraphBuilder.unitized(estimate) < bgGraphBuilder.urgentHighMark)){
+            } else if(bgGraphBuilder.unitized(estimate) >= bgGraphBuilder.highMark) {
+                if (bgGraphBuilder.unitized(estimate) < bgGraphBuilder.urgentHighMark) {
                     currentBgValueText.setTextColor(Utils.COLOR_ORANGE);
                 } else {
                     currentBgValueText.setTextColor(Utils.COLOR_RED);
                 }
-            else {
+            } else {
                 currentBgValueText.setTextColor(Color.WHITE);
             }
         }

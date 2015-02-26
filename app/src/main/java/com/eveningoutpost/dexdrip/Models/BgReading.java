@@ -142,13 +142,13 @@ public class BgReading extends Model {
     public static double activeSlope() {
         BgReading bgReading = BgReading.lastNoSenssor();
         double slope = (2 * bgReading.a * (new Date().getTime() + BESTOFFSET)) + bgReading.b;
-        Log.w(TAG, "ESTIMATE SLOPE " + slope);
+        Log.w(TAG, "ESTIMATE ACTIVESLOPE " + slope);
         return slope;
     }
 
     public double staticSlope() {
         double slope = (2 * this.a * this.timestamp) + this.b;
-        Log.w(TAG, "ESTIMATE SLOPE " + slope);
+        Log.w(TAG, "ESTIMATE STATICSLOPE " + slope);
         return slope;
     }
 
@@ -164,7 +164,8 @@ public class BgReading extends Model {
     }
 
     //*******CLASS METHODS***********//
-    public static BgReading create(double raw_data, Context context, Long timestamp) {
+    //public static BgReading create(double raw_data, Context context, Long timestamp) {
+    public static BgReading create(double raw_data, double filtered_data, Context context, Long timestamp) {
         BgReading bgReading = new BgReading();
         Sensor sensor = Sensor.currentSensor();
         if (sensor != null) {
@@ -392,6 +393,8 @@ public class BgReading extends Model {
             double x1 = timestamp;
             double y2 = second_latest.calculated_value;
             double x2 = second_latest.timestamp;
+            Log.w(TAG, "y1: " + y1);
+            Log.w(TAG, "y2: " + y2);
             if(y1 == y2) {
                 calculated_value_slope = 0;
             } else {

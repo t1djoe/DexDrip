@@ -79,8 +79,8 @@ public class WixelReader  extends Thread {
     public static boolean almostEquals( TransmitterRawData e1, TransmitterRawData e2)
     {
         if (e1 == null || e2==null) {
-+            return false;
-+        }
+            return false;
+        }
         // relative time is in ms
         if ((Math.abs(e1.CaptureDateTime - e2.CaptureDateTime) < 120 * 1000 ) &&
                 (e1.TransmissionId == e2.TransmissionId)) {
@@ -330,16 +330,16 @@ public class WixelReader  extends Thread {
                     TransmitterRawData LastReading = LastReadingArr[LastReadingArr.length -1];
 
                     //if (LastReading.CaptureDateTime > LastReportedReading + 5000) {
-+	        		// Make sure we do not report packets from the far future...
-+	        		if ((LastReading.CaptureDateTime > LastReportedTime ) &&
-+	        		        (!almostEquals(LastReading, LastReportedReading)) &&
-+	        		        LastReading.CaptureDateTime < new Date().getTime() + 12000) {
+	        		// Make sure we do not report packets from the far future...
+	        		if ((LastReading.CaptureDateTime > LastReportedTime ) &&
+	        		        (!almostEquals(LastReading, LastReportedReading)) &&
+	        		        LastReading.CaptureDateTime < new Date().getTime() + 12000) {
                         // We have a real new reading...
                         Log.e(TAG, "calling setSerialDataToTransmitterRawData " + LastReading.RawValue +
-+	        			        " LastReading.CaptureDateTime " + LastReading.CaptureDateTime + " " + LastReading.TransmissionId);
+	        			        " LastReading.CaptureDateTime " + LastReading.CaptureDateTime + " " + LastReading.TransmissionId);
                         setSerialDataToTransmitterRawData(LastReading.RawValue , LastReading.BatteryLife, LastReading.UploaderBatteryLife, LastReading.CaptureDateTime);
                         LastReportedReading = LastReading;
-+	        			LastReportedTime = LastReading.CaptureDateTime;
+	        			LastReportedTime = LastReading.CaptureDateTime;
                     }
                 }
                 // let's sleep (right now for 30 seconds)
@@ -397,7 +397,7 @@ public class WixelReader  extends Thread {
         if (transmitterData != null) {
             Sensor sensor = Sensor.currentSensor();
             if (sensor != null) {
-                BgReading bgReading = BgReading.create(transmitterData.raw_data, mContext, CaptureTime);
+                //BgReading bgReading = BgReading.create(transmitterData.raw_data, transmitterData.filtered_data,mContext, CaptureTime);
                 sensor.latest_battery_level = transmitterData.sensor_battery_level;
                 sensor.save();
             } else {

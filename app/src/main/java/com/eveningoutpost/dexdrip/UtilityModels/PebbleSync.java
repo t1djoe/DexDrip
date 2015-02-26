@@ -40,6 +40,8 @@ public class PebbleSync {
     public static final int UPLOADER_BATTERY_KEY = 5;
     public static final int NAME_KEY = 6;
 
+    public String deltaString = "0";
+
     private Context mContext;
     private BgGraphBuilder bgGraphBuilder;
     private BgReading mBgReading;
@@ -50,6 +52,7 @@ public class PebbleSync {
         mBgReading = null;
         init();
     }
+
     private void init() {
         Log.i(TAG,"Initialising...");
 
@@ -93,8 +96,13 @@ public class PebbleSync {
 
     public String bgDelta() {
         //String deltaString = bgGraphBuilder.unitized_string((mBgReading.calculated_value_slope * (5 * 60 * 1000)));
-        String deltaString;
-        if ((((mBgReading.timestamp + offsetFromUTC) / 1000) - ((new Date().getTime() +offsetFromUTC) / 1000)) <= 0){
+        TimeZone tz = TimeZone.getDefault();
+        int offsetFromUTC = tz.getOffset(new Date().getTime());
+        Log.v("PebbleSync","bg time: " + ((mBgReading.timestamp + offsetFromUTC) / 1000));
+        Log.v("PebbleSync","current time: " + ((new Date().getTime() + offsetFromUTC) / 1000));
+        Log.v("PebbleSync","delta time: " + (((mBgReading.timestamp + offsetFromUTC) / 1000) - ((new Date().getTime() + offsetFromUTC) / 1000)));
+        Log.v("PebbleSync","calculated_value_slope: " + (mBgReading.calculated_value_slope * 360000));
+        if ((((mBgReading.timestamp + offsetFromUTC) / 1000) - ((new Date().getTime() + offsetFromUTC) / 1000)) == 0){
             if((PreferenceManager.getDefaultSharedPreferences(mContext).getString("units","mgdl").compareTo("mgdl") == 0)) {
                 Log.v("PebbleSync","mg/dl");
                 deltaString = String.format("%.0f", mBgReading.calculated_value_slope * 360000);
