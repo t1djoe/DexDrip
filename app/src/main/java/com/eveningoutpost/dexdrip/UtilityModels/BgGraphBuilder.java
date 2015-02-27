@@ -155,8 +155,10 @@ public class BgGraphBuilder {
 
     private void addBgReadingValues() {
         for (BgReading bgReading : bgReadings) {
-            if ((unitized(bgReading.calculated_value) >= highMark) {
+            if (unitized(bgReading.calculated_value) >= highMark) {
                 if (unitized(bgReading.calculated_value) >= urgentHighMark) {
+                    urgentHighValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+                } else if (unitized(bgReading.calculated_value) >= 400) {
                     urgentHighValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(400)));
                 } else {
                     highValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
@@ -164,6 +166,8 @@ public class BgGraphBuilder {
             } else if (unitized(bgReading.calculated_value) <= lowMark) {
                 if (unitized(bgReading.calculated_value) <= urgentLowMark) {
                     urgentLowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
+                } else if (unitized(bgReading.calculated_value) <= 40) {
+                    urgentLowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(40)));
                 } else {
                     lowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
                 } 
