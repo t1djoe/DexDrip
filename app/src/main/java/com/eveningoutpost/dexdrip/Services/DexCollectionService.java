@@ -518,14 +518,7 @@ public class DexCollectionService extends Service {
                 sensor.wixel_battery_level = transmitterData.wixel_battery_level;
                 sensor.save();
 
-                //BgReading bgReading = BgReading.create(transmitterData.raw_data, this);
-                Log.w(TAG, "timestamp:  " + timestamp);
-                Log.w(TAG, "mBgReading: " + mBgReading.timestamp);
-                if (timestamp != mBgReading.timestamp) {
-                    BgReading bgReading = BgReading.create(transmitterData.raw_data,transmitterData.filtered_data, this, timestamp);}
-            } else {
-                Log.w(TAG, "No Active Sensor, Data only stored in Transmitter Data");
-            }
+                BgReading bgReading = BgReading.create(transmitterData.raw_data, transmitterData.filtered_data, this, timestamp);}
         }
     }
 }

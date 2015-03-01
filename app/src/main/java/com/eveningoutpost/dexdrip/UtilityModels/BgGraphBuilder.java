@@ -170,7 +170,7 @@ public class BgGraphBuilder {
                     urgentLowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(40)));
                 } else {
                     lowValues.add(new PointValue((float)bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
-                } 
+                }
             } else {
                 inRangeValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
             }

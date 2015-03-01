@@ -39,6 +39,7 @@ public class PebbleSync {
     public static final int BG_DELTA_KEY = 4;
     public static final int UPLOADER_BATTERY_KEY = 5;
     public static final int NAME_KEY = 6;
+    public static final int PHONE_BATTERY_KEY = 7;
 
     public String deltaString = "0";
 
@@ -50,18 +51,22 @@ public class PebbleSync {
     public PebbleSync(Context context){
         this.mContext = context;
         mBgReading = null;
-        init();
+        try {
+            init();
+        } catch (Exception e) {
+        e.printStackTrace();
+        }
     }
 
     private void init() {
         Log.i(TAG,"Initialising...");
 
         PebbleKit.registerReceivedDataHandler(mContext, new PebbleKit.PebbleDataReceiver(PEBBLEAPP_UUID) {
-            @Override
-            public void receiveData(final Context context, final int transactionId, final PebbleDictionary data) {
-                Log.d(TAG, "Received Query. data: " + data.size());
-                PebbleKit.sendAckToPebble(context, transactionId);
-                sendData(context, mBgReading);
+        @Override
+        public void receiveData(final Context context, final int transactionId, final PebbleDictionary data) {
+            Log.d(TAG, "Received Query. data: " + data.size());
+            PebbleKit.sendAckToPebble(context, transactionId);
+            sendData(context, mBgReading);
             }
         });
     }
@@ -71,15 +76,20 @@ public class PebbleSync {
         TimeZone tz = TimeZone.getDefault();
         Date now = new Date();
         int offsetFromUTC = tz.getOffset(now.getTime());
-        Log.v("PebbleSync", "buildDictionary: slopeOrdinal-"+slopeOrdinal()+" bgReading-"+bgReading()+" bgTime-"+ (int)(mBgReading.timestamp/1000)+" phoneTime-"+ (int)(new Date().getTime()/1000)+" bgDelta-"+bgDelta());
-        dictionary.addString(ICON_KEY, slopeOrdinal());
-        dictionary.addString(BG_KEY, bgReading());
-        //buff.putLong(mBgReading.timestamp);
-        dictionary.addUint32(RECORD_TIME_KEY, (int) (((mBgReading.timestamp + offsetFromUTC) / 1000)));
-        dictionary.addUint32(PHONE_TIME_KEY, (int) ((new Date().getTime() +offsetFromUTC) / 1000));
-        dictionary.addString(BG_DELTA_KEY, bgDelta());
-        dictionary.addString(UPLOADER_BATTERY_KEY, DexCollectionService.getBridgeBatteryAsString());
-        dictionary.addString(NAME_KEY, "Bridge");
+        try {
+            Log.v("PebbleSync", "buildDictionary: slopeOrdinal-" + slopeOrdinal() + " bgReading-" + bgReading() + " bgTime-" + (int) (mBgReading.timestamp / 1000) + " phoneTime-" + (int) (new Date().getTime() / 1000) + " bgDelta-" + bgDelta());
+            dictionary.addString(ICON_KEY, slopeOrdinal());
+            dictionary.addString(BG_KEY, bgReading());
+            //buff.putLong(mBgReading.timestamp);
+            dictionary.addUint32(RECORD_TIME_KEY, (int) (((mBgReading.timestamp + offsetFromUTC) / 1000)));
+            dictionary.addUint32(PHONE_TIME_KEY, (int) ((new Date().getTime() + offsetFromUTC) / 1000));
+            dictionary.addString(BG_DELTA_KEY, bgDelta());
+            dictionary.addString(UPLOADER_BATTERY_KEY, DexCollectionService.getBridgeBatteryAsString());
+            dictionary.addString(NAME_KEY, "Bridge");
+            dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return dictionary;
     }
 
@@ -140,12 +150,14 @@ public class PebbleSync {
 
     public int getBatteryLevel() {
         Intent batteryIntent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        float level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        Log.d("PEBBLE PUSHER", "level: " + level);
+        float scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        Log.d("PEBBLE PUSHER", "scale: " + scale);
         if(level == -1 || scale == -1) {
             return 50;
         }
-        return (int)(((float)level / (float)scale) * 100.0f);
+        return (int)((level / scale) * 100.0f);
     }
 
     public String slopeOrdinal(){

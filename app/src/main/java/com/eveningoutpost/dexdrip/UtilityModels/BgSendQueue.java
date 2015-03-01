@@ -99,7 +99,11 @@ public class BgSendQueue extends Model {
         }
 
         if(prefs.getBoolean("broadcast_to_pebble", false)) {
-            pebbleSync.sendData(context, bgReading);
+            try {
+                pebbleSync.sendData(context, bgReading);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
