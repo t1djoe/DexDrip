@@ -40,7 +40,8 @@ public class PebbleSync {
     public static final int UPLOADER_BATTERY_KEY = 5;
     public static final int NAME_KEY = 6;
     public static final int PHONE_BATTERY_KEY = 7;
-
+    public static final int CURRENT_IOB_KEY = 8;
+    
     public String deltaString = "0";
 
     private Context mContext;
@@ -89,6 +90,8 @@ public class PebbleSync {
             dictionary.addString(NAME_KEY, "Bridge");
             Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
+            Log.d(TAG, "currentIOB: " + currentIOB());
+            dictionary.addString(CURRENT_IOB_KEY, currentIOB());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,6 +138,10 @@ public class PebbleSync {
 
     public String phoneBattery() {
         return String.valueOf(getBatteryLevel());
+    }
+
+    public String currentIOB() {
+        return Home.iob;
     }
 
     public String bgUnit() {
