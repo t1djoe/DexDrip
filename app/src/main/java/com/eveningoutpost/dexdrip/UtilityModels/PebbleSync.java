@@ -84,8 +84,10 @@ public class PebbleSync {
             dictionary.addUint32(RECORD_TIME_KEY, (int) (((mBgReading.timestamp + offsetFromUTC) / 1000)));
             dictionary.addUint32(PHONE_TIME_KEY, (int) ((new Date().getTime() + offsetFromUTC) / 1000));
             dictionary.addString(BG_DELTA_KEY, bgDelta());
+            Log.d(TAG, "bridgeBattery: " + DexCollectionService.getBridgeBatteryAsString());
             dictionary.addString(UPLOADER_BATTERY_KEY, DexCollectionService.getBridgeBatteryAsString());
             dictionary.addString(NAME_KEY, "Bridge");
+            Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,14 +152,15 @@ public class PebbleSync {
 
     public int getBatteryLevel() {
         Intent batteryIntent = mContext.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        float level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         Log.d("PEBBLE PUSHER", "level: " + level);
         float scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
         Log.d("PEBBLE PUSHER", "scale: " + scale);
         if(level == -1 || scale == -1) {
             return 50;
         }
-        return (int)((level / scale) * 100.0f);
+        Log.d("PEBBLE PUSHER", "charge: " + (int) level);
+        return (int) level;
     }
 
     public String slopeOrdinal(){
