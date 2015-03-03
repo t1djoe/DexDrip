@@ -50,6 +50,8 @@ public class PebbleSync {
     private BgReading mBgReading;
     //private PebbleKit.PebbleDataReceiver mDataReciever = null;
 
+    private IobCob iobCob = new IobCob();
+
     public PebbleSync(Context context){
         this.mContext = context;
         mBgReading = null;
@@ -91,8 +93,9 @@ public class PebbleSync {
             dictionary.addString(NAME_KEY, "Bridge");
             Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
-            Log.d(TAG, "currentIOB: " + String.format("%2.1f", Home.iob));
-            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", Home.iob));
+            iobCob.calcIobCob();
+            Log.d(TAG, "currentIOB: " + String.format("%2.1f", iobCob.iob));
+            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", iobCob.iob));
         } catch (Exception e) {
             e.printStackTrace();
         }
