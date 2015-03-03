@@ -67,8 +67,8 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     public boolean updateStuff;
     public boolean updatingPreviewViewport = false;
     public boolean updatingChartViewport = false;
-    public double iob;
-    public double cob;
+    public static double iob;
+    public static double cob;
     public double calcIob;
     public double calcCob;
     public double carbImpact;
@@ -81,6 +81,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     public double activity;
     public double insulinActivity;
     public boolean isShown = false;
+    public static double psIob;
 
     public BgGraphBuilder bgGraphBuilder;
     BroadcastReceiver _broadcastReceiver;
@@ -455,6 +456,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         // re-run iobTotal() to get latest insulinActivity
         iobTotal();
         iob = calcIob;
+        psIob = calcIob;
         insulinActivity = activity;
 
 
@@ -502,24 +504,19 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
 
         iobContrib = 0;
         activityContrib = 0;
+        double scaleFactor = 3.0/dia;
 
-        int peak = 0;
+        int peak = 75;
 
         Date treatDate = new Date();
         Date now = new Date();
         treatDate.setTime((treatDate.getTime() - (4 * 60 * 60 * 1000)));
         Log.i("iobCalc dia: " + dia, "INSULIN");
-        if (dia == 3) {
-            peak = 75;
-        }else if (dia == 4){
-            peak = 90;
-        } else {
-            Log.i("DIA of " + dia + "not supported", "INSULIN");
-        }
+
         Log.i("iobCalc insulin: " + treatment.insulin, "INSULIN");
         if (treatment.insulin > 0) {
 
-            long minAgo=(now.getTime() - treatment.treatment_time)/1000/60;
+            long minAgo=(long) (scaleFactor * (now.getTime() - treatment.treatment_time)/1000/60);
             Log.i("iobCalc minAgo: " + minAgo, "INSULIN");
 
             if (minAgo < 0) {
@@ -640,4 +637,5 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
             return false;
         }
     }
+
 }

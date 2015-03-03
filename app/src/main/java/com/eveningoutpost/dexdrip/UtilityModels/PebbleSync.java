@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.activeandroid.Model;
+import com.eveningoutpost.dexdrip.Home;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Services.DexCollectionService;
 import com.getpebble.android.kit.PebbleKit;
@@ -90,8 +91,8 @@ public class PebbleSync {
             dictionary.addString(NAME_KEY, "Bridge");
             Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
-            Log.d(TAG, "currentIOB: " + currentIOB());
-            dictionary.addString(CURRENT_IOB_KEY, currentIOB());
+            Log.d(TAG, "currentIOB: " + String.format("%2.1f", Home.iob));
+            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", Home.iob));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,13 +137,7 @@ public class PebbleSync {
         }
     }
 
-    public String phoneBattery() {
-        return String.valueOf(getBatteryLevel());
-    }
-
-    public String currentIOB() {
-        return Home.iob;
-    }
+    public String phoneBattery() { return String.valueOf(getBatteryLevel()); }
 
     public String bgUnit() {
         return bgGraphBuilder.unit();
