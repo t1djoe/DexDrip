@@ -87,8 +87,8 @@ public class PebbleSync {
             dictionary.addString(NAME_KEY, "Bridge");
             Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
-            Log.d(TAG, "currentIOB: " + String.format("%2.1f", IobCob.iob()));
-            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", IobCob.iob()));
+            //Log.d(TAG, "currentIOB: " + String.format("%2.1f", IobCob.iob()));
+            //dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", IobCob.iob()));
         } catch (Exception e) {
             e.printStackTrace();
         }
