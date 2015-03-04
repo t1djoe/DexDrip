@@ -39,8 +39,6 @@ public class BgSendQueue extends Model {
 
     private static PebbleSync pebbleSync = new PebbleSync(mContext);
 
-    private static IobCob iobCob = new IobCob();
-
     public static BgSendQueue nextBgJob() {
         return new Select()
                 .from(BgSendQueue.class)
@@ -107,8 +105,6 @@ public class BgSendQueue extends Model {
                 e.printStackTrace();
             }
         }
-
-        iobCob.calcIobCob();
 
     }
 

@@ -29,12 +29,10 @@ import android.widget.Toast;
 import com.eveningoutpost.dexdrip.Models.ActiveBluetoothDevice;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Calibration;
-import com.eveningoutpost.dexdrip.Models.Treatments;
+import com.eveningoutpost.dexdrip.UtilityModels.IobCob;
 import com.eveningoutpost.dexdrip.Services.WixelReader;
 import com.eveningoutpost.dexdrip.UtilityModels.BgGraphBuilder;
 import com.eveningoutpost.dexdrip.UtilityModels.CollectionServiceStarter;
-import com.eveningoutpost.dexdrip.UtilityModels.Intents;
-import com.eveningoutpost.dexdrip.UtilityModels.IobCob;
 import com.eveningoutpost.dexdrip.UtilityModels.Notifications;
 import com.eveningoutpost.dexdrip.utils.DatabaseUtil;
 import com.eveningoutpost.dexdrip.utils.ShareNotification;
@@ -42,7 +40,6 @@ import com.eveningoutpost.dexdrip.utils.ShareNotification;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import lecho.lib.hellocharts.ViewportChangeListener;
@@ -58,7 +55,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private LineChartView chart;
     private PreviewLineChartView previewChart;
-    SharedPreferences prefs;
+
     Viewport tempViewport = new Viewport();
     Viewport holdViewport = new Viewport();
     public float left;
@@ -69,6 +66,8 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     public boolean updatingPreviewViewport = false;
     public boolean updatingChartViewport = false;
     public boolean isShown = false;
+
+    SharedPreferences prefs;
 
     public BgGraphBuilder bgGraphBuilder;
     BroadcastReceiver _broadcastReceiver;
@@ -265,8 +264,8 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
             currentWixelBatteryText.setPaintFlags((currentWixelBatteryText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG)));
         }
 
-        displayIOB.setText("IOB: " + obdf.format(IobCob.iob) + "U");
-        displayCOB.setText("COB: " + obdf.format(IobCob.cob) + "g");
+//        displayIOB.setText("IOB: " + obdf.format(IobCob.iob()) + "U");
+//        displayCOB.setText("COB: " + obdf.format(IobCob.cob()) + "g");
 
         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == false) {
             currentWixelBatteryText.setVisibility(View.INVISIBLE);
@@ -318,7 +317,9 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
         boolean predictive = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("predictive_bg", false);
             if (lastBgreading != null) {
             double estimate = 0;
-            if ((new Date().getTime()) - (60000 * 16) - lastBgreading.timestamp > 0) {
+            Log.i("time:getTime(): ", String.valueOf((new Date().getTime() - (60000 * 16))));
+            Log.i("time:timestamp: ", String.valueOf(lastBgreading.timestamp));
+            if (new Date().getTime() - (60000 * 16) - lastBgreading.timestamp > 0) {
                 notificationText.setText("Signal Missed");
                 if(!predictive){
                     estimate=lastBgreading.calculated_value;

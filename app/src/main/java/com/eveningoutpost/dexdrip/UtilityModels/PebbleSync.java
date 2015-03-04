@@ -7,15 +7,11 @@ import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.activeandroid.Model;
-import com.eveningoutpost.dexdrip.Home;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Services.DexCollectionService;
 import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -48,9 +44,7 @@ public class PebbleSync {
     private Context mContext;
     private BgGraphBuilder bgGraphBuilder;
     private BgReading mBgReading;
-    //private PebbleKit.PebbleDataReceiver mDataReciever = null;
-
-    private IobCob iobCob = new IobCob();
+    //private PebbleKit.PebbleDataReceiver mDataReciever = null;;
 
     public PebbleSync(Context context){
         this.mContext = context;
@@ -93,9 +87,8 @@ public class PebbleSync {
             dictionary.addString(NAME_KEY, "Bridge");
             Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
-            iobCob.calcIobCob();
-            Log.d(TAG, "currentIOB: " + String.format("%2.1f", iobCob.iob));
-            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", iobCob.iob));
+            Log.d(TAG, "currentIOB: " + String.format("%2.1f", IobCob.iob()));
+            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", IobCob.iob()));
         } catch (Exception e) {
             e.printStackTrace();
         }

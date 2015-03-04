@@ -1,11 +1,12 @@
 package com.eveningoutpost.dexdrip.UtilityModels;
 
-import android.content.Context;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.eveningoutpost.dexdrip.Home;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Treatments;
 
@@ -13,11 +14,15 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by joe on 3/2/15.
+ * Created by joe on 3/3/15.
  */
-public class IobCob {
+@TargetApi(android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
+public class IobCob extends Activity{
+
+    private final static String TAG = IobCob.class.getSimpleName();
     public static double iob;
     public static double cob;
+
     public double calcIob;
     public double calcCob;
     public double carbImpact;
@@ -27,20 +32,34 @@ public class IobCob {
     public int isDecaying;
     public double iobContrib;
     public double activityContrib;
-    public double activity;
+    private double activity;
     public double insulinActivity;
 
-    SharedPreferences prefs;
+    BgReading lastBgreading = BgReading.lastNoSenssor();
+
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    double bgi = lastBgreading.calculated_value;
+    double carbs_hr = Double.parseDouble(prefs.getString("carbs_hr", "0"));
+    double sens = Double.parseDouble(prefs.getString("sensitivity", "0"));
+    double dia = Double.parseDouble(prefs.getString("insulinDIA", "0"));
+    double carbratio = Double.parseDouble(prefs.getString("carbRatio", "0"));
+
+    public IobCob iobCob;
+
+    public static double iob(){
+        IobCob iobcob = new IobCob();
+        iobcob.calcIobCob();
+        return iobcob.iob;
+    }
+
+    public static double cob(){
+        IobCob iobcob = new IobCob();
+        iobcob.calcIobCob();
+        return iobcob.cob;
+    }
 
     public void calcIobCob() {
         Log.i("calcIobCob", "MESSAGE");
-        prefs = PreferenceManager.getDefaultSharedPreferences(Home.getContext());
-        BgReading lastBgreading = BgReading.lastNoSenssor();
-        double bgi = lastBgreading.calculated_value;
-        double carbs_hr = Double.parseDouble(prefs.getString("carbs_hr", "0"));
-        double sens = Double.parseDouble(prefs.getString("sensitivity", "0"));
-        double dia = Double.parseDouble(prefs.getString("insulinDIA", "0"));
-        double carbratio = Double.parseDouble(prefs.getString("carbRatio", "0"));
 
         int predict_hr = (int) dia;
 
