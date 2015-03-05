@@ -44,6 +44,7 @@ public class PebbleSync {
     private Context mContext;
     private BgGraphBuilder bgGraphBuilder;
     private BgReading mBgReading;
+    private IobCob mIobCob;
     //private PebbleKit.PebbleDataReceiver mDataReciever = null;;
 
     public PebbleSync(Context context){
@@ -64,7 +65,7 @@ public class PebbleSync {
         public void receiveData(final Context context, final int transactionId, final PebbleDictionary data) {
             Log.d(TAG, "Received Query. data: " + data.size());
             PebbleKit.sendAckToPebble(context, transactionId);
-            sendData(context, mBgReading);
+            sendData(context, mBgReading, mIobCob);
             }
         });
     }
@@ -75,30 +76,27 @@ public class PebbleSync {
         Date now = new Date();
         int offsetFromUTC = tz.getOffset(now.getTime());
         try {
-            Log.v("PebbleSync", "buildDictionary: slopeOrdinal-" + slopeOrdinal() + " bgReading-" + bgReading() + " bgTime-" + (int) (mBgReading.timestamp / 1000) + " phoneTime-" + (int) (new Date().getTime() / 1000) + " bgDelta-" + bgDelta());
             dictionary.addString(ICON_KEY, slopeOrdinal());
             dictionary.addString(BG_KEY, bgReading());
-            //buff.putLong(mBgReading.timestamp);
             dictionary.addUint32(RECORD_TIME_KEY, (int) (((mBgReading.timestamp + offsetFromUTC) / 1000)));
             dictionary.addUint32(PHONE_TIME_KEY, (int) ((new Date().getTime() + offsetFromUTC) / 1000));
             dictionary.addString(BG_DELTA_KEY, bgDelta());
-            Log.d(TAG, "bridgeBattery: " + DexCollectionService.getBridgeBatteryAsString());
             dictionary.addString(UPLOADER_BATTERY_KEY, DexCollectionService.getBridgeBatteryAsString());
             dictionary.addString(NAME_KEY, "Bridge");
-            Log.d(TAG, "phoneBattery: " + phoneBattery());
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
-            //Log.d(TAG, "currentIOB: " + String.format("%2.1f", IobCob.iob()));
-            //dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", IobCob.iob()));
+            Log.d(TAG, "currentIOB: " + String.format("%2.1f", mIobCob.iob()));
+            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", mIobCob.iob()));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return dictionary;
     }
 
-    public void sendData(Context context, BgReading bgReading){
+    public void sendData(Context context, BgReading bgReading, IobCob iobcob){
         mContext = context;
         bgGraphBuilder = new BgGraphBuilder(mContext);
         mBgReading = BgReading.last();
+        mIobCob = iobcob;
         sendDownload(buildDictionary());
     }
 
@@ -110,21 +108,14 @@ public class PebbleSync {
         //String deltaString = bgGraphBuilder.unitized_string((mBgReading.calculated_value_slope * (5 * 60 * 1000)));
         TimeZone tz = TimeZone.getDefault();
         int offsetFromUTC = tz.getOffset(new Date().getTime());
-        Log.v("PebbleSync","bg time: " + ((mBgReading.timestamp + offsetFromUTC) / 1000));
-        Log.v("PebbleSync","current time: " + ((new Date().getTime() + offsetFromUTC) / 1000));
-        Log.v("PebbleSync","delta time: " + (((mBgReading.timestamp + offsetFromUTC) / 1000) - ((new Date().getTime() + offsetFromUTC) / 1000)));
-        Log.v("PebbleSync","calculated_value_slope: " + (mBgReading.calculated_value_slope * 360000));
         if ((((mBgReading.timestamp + offsetFromUTC) / 1000) - ((new Date().getTime() + offsetFromUTC) / 1000)) == 0){
             if((PreferenceManager.getDefaultSharedPreferences(mContext).getString("units","mgdl").compareTo("mgdl") == 0)) {
-                Log.v("PebbleSync","mg/dl");
                 deltaString = String.format("%.0f", mBgReading.calculated_value_slope * 360000);
             } else {
-                Log.v("PebbleSync","mmol");
                 deltaString = String.format("%.1f", (mBgReading.calculated_value_slope * 360000)*Constants.MGDL_TO_MMOLL);
             }
         //deltaString = bgGraphBuilder.unitized_string((mBgReading.calculated_value_slope * 360000));
         }
-        Log.v("PebbleSync","bgDelta: "+ deltaString);
         //if(mBgReading.calculated_value_slope > 0) {
         if(Float.valueOf(deltaString) > 0) {
             return ("+"+deltaString);

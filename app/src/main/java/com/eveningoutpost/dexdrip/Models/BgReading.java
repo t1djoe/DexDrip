@@ -16,6 +16,7 @@ import com.eveningoutpost.dexdrip.R;
 import com.eveningoutpost.dexdrip.Sensor;
 import com.eveningoutpost.dexdrip.UtilityModels.BgSendQueue;
 import com.eveningoutpost.dexdrip.UtilityModels.Constants;
+import com.eveningoutpost.dexdrip.UtilityModels.IobCob;
 import com.eveningoutpost.dexdrip.UtilityModels.Notifications;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -243,7 +244,7 @@ public class BgReading extends Model {
                 bgReading.save();
                 bgReading.perform_calculations();
                 Notifications.notificationSetter(context);
-                BgSendQueue.addToQueue(bgReading, "create", context);
+                BgSendQueue.addToQueue(bgReading, "create", context, new IobCob());
             }
         }
         Log.w("BG GSON: ",bgReading.toS());

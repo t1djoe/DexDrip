@@ -26,6 +26,9 @@ public class BgSendQueue extends Model {
     @Column(name = "bgReading", index = true)
     public BgReading bgReading;
 
+    @Column(name = "iobcob", index = true)
+    public IobCob iobcob;
+
     @Column(name = "success", index = true)
     public boolean success;
 
@@ -66,10 +69,11 @@ public class BgSendQueue extends Model {
                 .execute();
     }
 
-    public static void addToQueue(BgReading bgReading, String operation_type, Context context) {
+    public static void addToQueue(BgReading bgReading, String operation_type, Context context, IobCob iobcob) {
         BgSendQueue bgSendQueue = new BgSendQueue();
         bgSendQueue.operation_type = operation_type;
         bgSendQueue.bgReading = bgReading;
+        bgSendQueue.iobcob = iobcob;
         bgSendQueue.success = false;
         bgSendQueue.mongo_success = false;
         bgSendQueue.save();
@@ -100,7 +104,7 @@ public class BgSendQueue extends Model {
 
         if(prefs.getBoolean("broadcast_to_pebble", false)) {
             try {
-                pebbleSync.sendData(context, bgReading);
+                pebbleSync.sendData(context, bgReading, iobcob);
             } catch (Exception e) {
                 e.printStackTrace();
             }

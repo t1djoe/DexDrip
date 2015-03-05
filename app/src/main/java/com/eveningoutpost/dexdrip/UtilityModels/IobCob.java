@@ -5,10 +5,16 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.eveningoutpost.dexdrip.Home;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Treatments;
+import com.google.gson.annotations.Expose;
 
 import java.util.Date;
 import java.util.List;
@@ -17,11 +23,18 @@ import java.util.List;
  * Created by joe on 3/3/15.
  */
 @TargetApi(android.os.Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class IobCob extends Activity{
+@Table(name = "IobCob", id = BaseColumns._ID)
+public class IobCob extends Model {
+
+    @Expose
+    @Column(name = "iob", index = true)
+    public double iob;
+
+    @Expose
+    @Column(name = "cob", index = true)
+    public double cob;
 
     private final static String TAG = IobCob.class.getSimpleName();
-    public static double iob;
-    public static double cob;
 
     public double calcIob;
     public double calcCob;
@@ -37,7 +50,7 @@ public class IobCob extends Activity{
 
     BgReading lastBgreading = BgReading.lastNoSenssor();
 
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Home.getContext());
     double bgi = lastBgreading.calculated_value;
     double carbs_hr = Double.parseDouble(prefs.getString("carbs_hr", "0"));
     double sens = Double.parseDouble(prefs.getString("sensitivity", "0"));

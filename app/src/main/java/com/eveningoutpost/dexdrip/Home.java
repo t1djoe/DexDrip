@@ -264,8 +264,8 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
             currentWixelBatteryText.setPaintFlags((currentWixelBatteryText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG)));
         }
 
-//        displayIOB.setText("IOB: " + obdf.format(IobCob.iob()) + "U");
-//        displayCOB.setText("COB: " + obdf.format(IobCob.cob()) + "g");
+        displayIOB.setText("IOB: " + obdf.format(IobCob.iob()) + "U");
+        displayCOB.setText("COB: " + obdf.format(IobCob.cob()) + "g");
 
         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("display_dd_batt", false) == false) {
             currentWixelBatteryText.setVisibility(View.INVISIBLE);
