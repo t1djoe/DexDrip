@@ -71,8 +71,7 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
 
     public BgGraphBuilder bgGraphBuilder;
     BroadcastReceiver _broadcastReceiver;
-    BgReading lastBgreading = BgReading.lastNoSenssor();
-
+    
     private static Context mContext;
 
     @Override
@@ -263,6 +262,8 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
             currentBgValueText.setPaintFlags(currentBgValueText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             currentWixelBatteryText.setPaintFlags((currentWixelBatteryText.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG)));
         }
+
+        BgReading lastBgreading = BgReading.lastNoSenssor();
 
         displayIOB.setText("IOB: " + obdf.format(IobCob.iob()) + "U");
         displayCOB.setText("COB: " + obdf.format(IobCob.cob()) + "g");
