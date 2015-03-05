@@ -34,6 +34,10 @@ public class IobCob extends Model {
     @Column(name = "cob", index = true)
     public double cob;
 
+    @Expose
+    @Column(name = "bgi", index = true)
+    public double bgi;
+
     private final static String TAG = IobCob.class.getSimpleName();
 
     public double calcIob;
@@ -51,7 +55,7 @@ public class IobCob extends Model {
     BgReading lastBgreading = BgReading.lastNoSenssor();
 
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Home.getContext());
-    double bgi = lastBgreading.calculated_value;
+    bgi = lastBgreading.calculated_value;
     double carbs_hr = Double.parseDouble(prefs.getString("carbs_hr", "0"));
     double sens = Double.parseDouble(prefs.getString("sensitivity", "0"));
     double dia = Double.parseDouble(prefs.getString("insulinDIA", "0"));
