@@ -55,6 +55,8 @@ public class BgGraphBuilder {
     private List<PointValue> highValues = new ArrayList<PointValue>();
     private List<PointValue> lowValues = new ArrayList<PointValue>();
     private List<PointValue> urgentLowValues = new ArrayList<PointValue>();
+    private List<PointValue> treatmentValues = new ArrayList<PointValue>();
+    private List<PointValue> calibrationValues = new ArrayList<PointValue>();
     public Viewport viewport;
 
 
@@ -69,6 +71,7 @@ public class BgGraphBuilder {
         defaultMinY = unitized(40);
         defaultMaxY = unitized(250);
         pointSize = isXLargeTablet() ? 5 : 3;
+        infoSize = isXLargeTablet() ? 10 : 6;
         axisTextSize = isXLargeTablet() ? 20 : Axis.DEFAULT_TEXT_SIZE_SP;
         previewAxisTextSize = isXLargeTablet() ? 12 : 5;
         hoursPreviewStep = isXLargeTablet() ? 2 : 1;
@@ -93,6 +96,8 @@ public class BgGraphBuilder {
 
     public List<Line> defaultLines() {
         addBgReadingValues();
+        addTreatmentValues();
+        addCalibrationValues();
         List<Line> lines = new ArrayList<Line>();
         lines.add(minShowLine());
         lines.add(maxShowLine());
@@ -105,6 +110,8 @@ public class BgGraphBuilder {
         lines.add(lowValuesLine());
         lines.add(highValuesLine());
         lines.add(urgentHighValuesLine());
+        lines.add(treatmentValuesLine());
+        lines.add(calibrationValuesLine());
         return lines;
     }
 
@@ -153,6 +160,24 @@ public class BgGraphBuilder {
         return inRangeValuesLine;
     }
 
+    public Line treatmentValuesLine() {
+        Line treatmentValuesLine = new Line(treatmentValues);
+        treatmentValuesLine.setColor(Utils.COLOR_BLUE);
+        treatmentValuesLine.setHasLines(false);
+        treatmentValuesLine.setPointRadius(infoSize);
+        treatmentValuesLine.setHasPoints(true);
+        return treatmentValuesLine;
+    }
+
+    public Line calibrationValuesLine() {
+        Line calibrationValuesLine = new Line(calibrationValues);
+        calibrationValuesLine.setColor(Utils.COLOR_RED);
+        calibrationValuesLine.setHasLines(false);
+        calibrationValuesLine.setPointRadius(infoSize);
+        calibrationValuesLine.setHasPoints(true);
+        return calibrationValuesLine;
+    }
+
     private void addBgReadingValues() {
         for (BgReading bgReading : bgReadings) {
             if (unitized(bgReading.calculated_value) >= highMark) {
@@ -174,6 +199,18 @@ public class BgGraphBuilder {
             } else {
                 inRangeValues.add(new PointValue((float) bgReading.timestamp, (float) unitized(bgReading.calculated_value)));
             }
+        }
+    }
+
+    private void addTreatmentValues() {
+        for (Treatments treatment : Treatments) {
+            treatmentValues.add(new PointValue((float) treatment.timestamp, (float) unitized(100)));
+        }
+    }
+
+    private void addCalibrationValues() {
+        for (Calibration calibrations : Calibration) {
+            treatmentValues.add(new PointValue((float) calibrations.timestamp, (float) unitized(100)));
         }
     }
 
@@ -244,7 +281,7 @@ public class BgGraphBuilder {
         minShowLine.setHasLines(false);
         return minShowLine;
     }
-
+    
     /////////AXIS RELATED//////////////
     public Axis yAxis() {
         Axis yAxis = new Axis();
