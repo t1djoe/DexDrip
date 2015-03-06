@@ -17,6 +17,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.internal.bind.DateTypeAdapter;
 
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,6 +93,18 @@ public class Treatments extends Model {
                 .from(Treatments.class)
                 .where("treatment_time >= " + treatDate.getTime())
                 .orderBy("_ID")
+                .execute();
+    }
+
+    public static List<Treatments> latestForGraph(int number, double startTime) {
+        DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(1);
+
+        return new Select()
+                .from(Treatments.class)
+                .where("treatment_time >= " + df.format(startTime))
+                .orderBy("treatment_time desc")
+                .limit(number)
                 .execute();
     }
 

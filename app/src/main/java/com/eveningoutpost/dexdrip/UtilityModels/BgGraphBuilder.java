@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 
 import com.eveningoutpost.dexdrip.Models.BgReading;
+import com.eveningoutpost.dexdrip.Models.Calibration;
+import com.eveningoutpost.dexdrip.Models.Treatments;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -43,6 +45,7 @@ public class BgGraphBuilder {
     public double defaultMaxY;
     public boolean doMgdl;
     final int pointSize;
+    final int infoSize;
     final int axisTextSize;
     final int previewAxisTextSize;
     final int hoursPreviewStep;
@@ -50,6 +53,8 @@ public class BgGraphBuilder {
     private double endHour;
     private final int numValues =(60/5)*24;
     private final List<BgReading> bgReadings = BgReading.latestForGraph( numValues, start_time);
+    private final List<Treatments> treatments = Treatments.latestForGraph( numValues, start_time);
+    private final List<Calibration> calibrations = Calibration.latestForGraph( numValues, start_time);
     private List<PointValue> inRangeValues = new ArrayList<PointValue>();
     private List<PointValue> urgentHighValues = new ArrayList<PointValue>();
     private List<PointValue> highValues = new ArrayList<PointValue>();
@@ -71,7 +76,7 @@ public class BgGraphBuilder {
         defaultMinY = unitized(40);
         defaultMaxY = unitized(250);
         pointSize = isXLargeTablet() ? 5 : 3;
-        infoSize = isXLargeTablet() ? 10 : 6;
+        infoSize = isXLargeTablet() ? 8 : 5;
         axisTextSize = isXLargeTablet() ? 20 : Axis.DEFAULT_TEXT_SIZE_SP;
         previewAxisTextSize = isXLargeTablet() ? 12 : 5;
         hoursPreviewStep = isXLargeTablet() ? 2 : 1;
@@ -153,7 +158,7 @@ public class BgGraphBuilder {
 
     public Line inRangeValuesLine() {
         Line inRangeValuesLine = new Line(inRangeValues);
-        inRangeValuesLine.setColor(Utils.COLOR_BLUE);
+        inRangeValuesLine.setColor(Utils.COLOR_GREEN);
         inRangeValuesLine.setHasLines(false);
         inRangeValuesLine.setPointRadius(pointSize);
         inRangeValuesLine.setHasPoints(true);
@@ -203,14 +208,14 @@ public class BgGraphBuilder {
     }
 
     private void addTreatmentValues() {
-        for (Treatments treatment : Treatments) {
-            treatmentValues.add(new PointValue((float) treatment.timestamp, (float) unitized(100)));
+        for (Treatments treatment : treatments) {
+            treatmentValues.add(new PointValue((float) treatment.treatment_time, (float) unitized(100)));
         }
     }
 
     private void addCalibrationValues() {
-        for (Calibration calibrations : Calibration) {
-            treatmentValues.add(new PointValue((float) calibrations.timestamp, (float) unitized(100)));
+        for (Calibration calibration : calibrations) {
+            treatmentValues.add(new PointValue((float) calibration.timestamp, (float) unitized(100)));
         }
     }
 

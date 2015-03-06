@@ -55,7 +55,6 @@ public class IobCob extends Model {
     BgReading lastBgreading = BgReading.lastNoSenssor();
 
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Home.getContext());
-    bgi = lastBgreading.calculated_value;
     double carbs_hr = Double.parseDouble(prefs.getString("carbs_hr", "0"));
     double sens = Double.parseDouble(prefs.getString("sensitivity", "0"));
     double dia = Double.parseDouble(prefs.getString("insulinDIA", "0"));
@@ -81,6 +80,7 @@ public class IobCob extends Model {
         int predict_hr = (int) dia;
 
         double cobDecay;
+        bgi = lastBgreading.calculated_value;
         iob = 0;
         cob = 0;
 

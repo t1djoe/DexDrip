@@ -38,6 +38,7 @@ public class PebbleSync {
     public static final int NAME_KEY = 6;
     public static final int PHONE_BATTERY_KEY = 7;
     public static final int CURRENT_IOB_KEY = 8;
+    public static final int CURRENT_COB_KEY = 9;
     
     public String deltaString = "0";
 
@@ -85,7 +86,8 @@ public class PebbleSync {
             dictionary.addString(NAME_KEY, "Bridge");
             dictionary.addString(PHONE_BATTERY_KEY, phoneBattery());
             Log.d(TAG, "currentIOB: " + String.format("%2.1f", mIobCob.iob()));
-            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.1f", mIobCob.iob()));
+            dictionary.addString(CURRENT_IOB_KEY, String.format("%2.2f", mIobCob.iob()));
+            dictionary.addString(CURRENT_COB_KEY, String.format("%2.1f", mIobCob.cob()));
         } catch (Exception e) {
             e.printStackTrace();
         }
