@@ -26,8 +26,8 @@ public class BgSendQueue extends Model {
     @Column(name = "bgReading", index = true)
     public BgReading bgReading;
 
-    @Column(name = "iobcob", index = true)
-    public IobCob iobcob;
+//    @Column(name = "iobcob", index = true)
+//    public IobCob iobcob;
 
     @Column(name = "success", index = true)
     public boolean success;
@@ -73,7 +73,7 @@ public class BgSendQueue extends Model {
         BgSendQueue bgSendQueue = new BgSendQueue();
         bgSendQueue.operation_type = operation_type;
         bgSendQueue.bgReading = bgReading;
-        bgSendQueue.iobcob = iobcob;
+        //bgSendQueue.iobcob = iobcob;
         bgSendQueue.success = false;
         bgSendQueue.mongo_success = false;
         bgSendQueue.save();

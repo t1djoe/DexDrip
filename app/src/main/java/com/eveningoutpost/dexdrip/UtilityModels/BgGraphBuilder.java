@@ -51,7 +51,7 @@ public class BgGraphBuilder {
     final int hoursPreviewStep;
 
     private double endHour;
-    private final int numValues =(60/5)*24;
+    private final int numValues =(60/5)*120;
     private final List<BgReading> bgReadings = BgReading.latestForGraph( numValues, start_time);
     private final List<Treatments> treatments = Treatments.latestForGraph( numValues, start_time);
     private final List<Calibration> calibrations = Calibration.latestForGraph( numValues, start_time);
@@ -215,7 +215,7 @@ public class BgGraphBuilder {
 
     private void addCalibrationValues() {
         for (Calibration calibration : calibrations) {
-            treatmentValues.add(new PointValue((float) calibration.timestamp, (float) unitized(100)));
+            calibrationValues.add(new PointValue((float) calibration.timestamp, (float) unitized(100)));
         }
     }
 
@@ -229,7 +229,7 @@ public class BgGraphBuilder {
         urgentHighLine.setColor(Utils.COLOR_RED);
         return urgentHighLine;
     }
-    
+
     public Line highLine() {
         List<PointValue> highLineValues = new ArrayList<PointValue>();
         highLineValues.add(new PointValue((float)start_time, (float)highMark));
@@ -286,7 +286,7 @@ public class BgGraphBuilder {
         minShowLine.setHasLines(false);
         return minShowLine;
     }
-    
+
     /////////AXIS RELATED//////////////
     public Axis yAxis() {
         Axis yAxis = new Axis();

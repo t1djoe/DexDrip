@@ -295,4 +295,23 @@ public class IobCob extends Model {
         }
     }
 
+    public double[] lookbackCarbs(int lookbackHours) {
+        double[] returnVal={};
+        Date time = new Date();
+        Date startCounting = new Date();
+        List<Treatments> latestTreatments = Treatments.latest();
+
+        startCounting.setTime(startCounting.getTime() - (lookbackHours*60*60*1000));
+        for (int i = 0; i < latestTreatments.size(); i++) {
+            Treatments element = latestTreatments.get(i);
+            if(element.carbs > 0) {
+                Date carbTime = new Date(element.treatment_time);
+                if ((carbTime.getTime() > startCounting.getTime()) && (carbTime.getTime() < time.getTime())) {
+                   returnVal[i] = element.carbs;
+                }
+            }
+        };
+        return returnVal;
+    }
+
 }
