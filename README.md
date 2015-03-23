@@ -1,4 +1,4 @@
-DexDrip
+xDrip
 =======
 
 Android Application that collects dexcom signals, allows calibrations, and (soon) uploads to a secure server
@@ -13,7 +13,7 @@ Android Application that collects dexcom signals, allows calibrations, and (soon
 
 ## Features that are complete
 * Nightscout Uploading
-* Basic Notifications (above or below threshold)
+* Basic Notifications (above or below threshold)d
 * Calibration Notifications
 * Graph of BG levels (with scroll, zoom, and day preview)
 * Graph of Calibration points
@@ -32,7 +32,7 @@ Android Application that collects dexcom signals, allows calibrations, and (soon
 
 
 # LINKS
-* [Project Site](http://stephenblackwasalreadytaken.github.io/DexDrip/)
-* [What you will need & Diagrams](https://github.com/StephenBlackWasAlreadyTaken/DexDrip/blob/gh-pages/hardware_setup.md)
-* [Wixel App](https://github.com/StephenBlackWasAlreadyTaken/wixel-DexDrip)
-* [Android App](https://github.com/StephenBlackWasAlreadyTaken/DexDrip)
+* [Project Site](http://stephenblackwasalreadytaken.github.io/xDrip/)
+* [What you will need & Diagrams](https://github.com/StephenBlackWasAlreadyTaken/xDrip/blob/gh-pages/hardware_setup.md)
+* [Wixel App](https://github.com/StephenBlackWasAlreadyTaken/wixel-xDrip)
+* [Android App](https://github.com/StephenBlackWasAlreadyTaken/xDrip)
