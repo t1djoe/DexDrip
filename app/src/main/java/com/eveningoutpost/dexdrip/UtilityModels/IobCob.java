@@ -307,7 +307,7 @@ public class IobCob extends Model {
             if(element.carbs > 0) {
                 Date carbTime = new Date(element.treatment_time);
                 if ((carbTime.getTime() > startCounting.getTime()) && (carbTime.getTime() < time.getTime())) {
-                   returnVal[i] = element.carbs;
+                    returnVal[i] = element.carbs;
                 }
             }
         };

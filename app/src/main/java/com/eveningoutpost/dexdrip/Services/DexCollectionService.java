@@ -276,15 +276,17 @@ public class DexCollectionService extends Service {
             @Override
             public void onCharacteristicChanged (BluetoothGatt gatt,
                                                  BluetoothGattCharacteristic characteristic){
-                final byte[] data;
+                //final byte[] data;
                 Log.w(TAG, "onCharacteristicChanged entered");
-                data = characteristic.getValue();
-                if(lastdata == null) lastdata = characteristic.getValue();
-                if(Arrays.equals(lastdata, data)) {
-                    Log.w(TAG, "duplicate packet.  Ignoring");
-                    return;
-                }
+                mCharacteristic = characteristic;
+                //data = characteristic.getValue();
+                //if(lastdata == null) lastdata = characteristic.getValue();
+                //if(Arrays.equals(lastdata, data) && lastdata != null) {
+                //    Log.w(TAG, "onCharacteristicChanged: duplicate packet.  Ignoring");
+                //    return;
+                //}
                 Log.w(TAG, "onCharacteristicChanged: new packet.");
+                //lastdata = data.clone();;
                 characteristicReadQueue.add(characteristic);
                 broadcastUpdate(ACTION_DATA_AVAILABLE, characteristicReadQueue.poll());
                 //if(characteristicReadQueue.size()>0) characteristicReadQueue.remove();

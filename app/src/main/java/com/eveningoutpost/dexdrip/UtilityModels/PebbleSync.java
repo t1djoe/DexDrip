@@ -97,7 +97,7 @@ public class PebbleSync {
     public void sendData(Context context, BgReading bgReading, IobCob iobcob){
         mContext = context;
         bgGraphBuilder = new BgGraphBuilder(mContext);
-        mBgReading = BgReading.last();
+        mBgReading = bgReading.last();
         mIobCob = iobcob;
         sendDownload(buildDictionary());
     }
