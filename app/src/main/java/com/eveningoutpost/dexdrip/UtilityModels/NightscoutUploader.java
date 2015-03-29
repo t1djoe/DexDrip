@@ -319,8 +319,8 @@ public class NightscoutUploader {
             json.put("sgv", (int)record.calculated_value);
             json.put("direction", record.slopeName());
             json.put("type", "sgv");
-            json.put("filtered", record.age_adjusted_raw_value); //TODO: change to actual filtered when I start storing it
-            json.put("unfiltered", record.age_adjusted_raw_value);
+            json.put("filtered", record.filtered_data);
+            json.put("unfiltered", record.raw_data);
             json.put("rssi", "100");
         }
 
@@ -428,8 +428,8 @@ public class NightscoutUploader {
                         testData.put("sgv", Math.round(record.calculated_value));
                         testData.put("direction", record.slopeName());
                         testData.put("type", "sgv");
-                        testData.put("filtered", record.age_adjusted_raw_value); //TODO: change to actual filtered when I start storing it
-                        testData.put("unfiltered", record.age_adjusted_raw_value);
+                        testData.put("filtered", record.filtered_data);
+                        testData.put("unfiltered", record.raw_data);
                         testData.put("rssi", "100");
                         dexcomData.update(testData, testData, true, false, WriteConcern.UNACKNOWLEDGED);
                     }

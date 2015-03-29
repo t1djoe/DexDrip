@@ -515,8 +515,6 @@ public class DexCollectionService extends Service {
                 }
                 return;
             }
-            Log.w(TAG, "buffer[0]: " + buffer[0]);
-            Log.w(TAG, "buffer[1]: " + buffer[1]);
             if (buffer[0] == 0x11 && buffer[1] == 0x00) {
                 //we have a data packet.  Check to see if the TXID is what we are expecting.
                 Log.w(TAG, "setSerialDataToTransmitterRawData: Received Data packet");
@@ -540,6 +538,7 @@ public class DexCollectionService extends Service {
                         sendBtMessage(txidMessage);
                     }
                     bridgeBattery = ByteBuffer.wrap(buffer).get(11);
+                    Log.w(TAG, "bridgeBattery: " + bridgeBattery);
                     //All is OK, so process it.
                     //first, tell the wixel it is OK to sleep.
                     Log.d(TAG,"setSerialDataToTransmitterRawData: Sending Data packet Ack, to put wixel to sleep");
@@ -552,6 +551,7 @@ public class DexCollectionService extends Service {
                         Sensor sensor = Sensor.currentSensor();
                         if (sensor != null) {
                             sensor.latest_battery_level = transmitterData.sensor_battery_level;
+                            sensor.wixel_battery_level = bridgeBattery;
                             sensor.save();
                             BgReading bgReading = BgReading.create(transmitterData.raw_data, transmitterData.filtered_data, this, timestamp);
                             Intent intent = new Intent("com.eveningoutpost.dexdrip.DexCollectionService.SAVED_BG");
@@ -569,6 +569,7 @@ public class DexCollectionService extends Service {
                 Sensor sensor = Sensor.currentSensor();
                 if (sensor != null) {
                     sensor.latest_battery_level = transmitterData.sensor_battery_level;
+                    sensor.wixel_battery_level = bridgeBattery;
                     sensor.save();
 
                     //BgReading bgReading = BgReading.create(transmitterData.raw_data, this);

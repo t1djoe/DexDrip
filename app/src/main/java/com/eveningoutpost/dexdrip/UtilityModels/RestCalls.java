@@ -66,7 +66,7 @@ public class RestCalls {
         bgReadingInterface().updateReading(user.uuid, bgSendQueue.bgReading.uuid, bgSendQueue.bgReading, new Callback<Gson>() {
                     @Override
                     public void success(Gson gsonResponse, Response response) {
-                        Log.w("REST CALL Update Success!:", "****************");
+                        Log.w("REST CALL Success!", "");
                         bgSendQueue.success = true;
                         bgSendQueue.save();
                     }
