@@ -102,6 +102,13 @@ public class PebbleSync {
         sendDownload(buildDictionary());
     }
 
+    public void sendData(Context context, BgReading bgReading){
+        mContext = context;
+        bgGraphBuilder = new BgGraphBuilder(mContext);
+        mBgReading = BgReading.last();
+        sendDownload(buildDictionary());
+    }
+
     public String bgReading() {
         return bgGraphBuilder.unitized_string(mBgReading.calculated_value);
     }

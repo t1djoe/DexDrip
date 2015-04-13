@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.eveningoutpost.dexdrip.Models.ActiveBluetoothDevice;
 import com.eveningoutpost.dexdrip.Models.BgReading;
 import com.eveningoutpost.dexdrip.Models.Calibration;
+import com.eveningoutpost.dexdrip.UtilityModels.Intents;
 import com.eveningoutpost.dexdrip.UtilityModels.IobCob;
 import com.eveningoutpost.dexdrip.Services.WixelReader;
 import com.eveningoutpost.dexdrip.UtilityModels.BgGraphBuilder;
@@ -71,7 +72,8 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
 
     public BgGraphBuilder bgGraphBuilder;
     BroadcastReceiver _broadcastReceiver;
-    
+    BroadcastReceiver newDataReceiver;
+
     private static Context mContext;
 
     @Override
@@ -103,10 +105,6 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
     protected void onResume(){
         super.onResume();
         checkEula();
-
-        CollectionServiceStarter collectionServiceStarter = new CollectionServiceStarter();
-        collectionServiceStarter.start(getApplicationContext());
-
         _broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context ctx, Intent intent) {
@@ -115,7 +113,16 @@ public class Home extends Activity implements NavigationDrawerFragment.Navigatio
                 }
             }
         };
+        newDataReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context ctx, Intent intent) {
+                holdViewport.set(0, 0, 0, 0);
+                setupCharts();
+                updateCurrentBgInfo();
+            }
+        };
         registerReceiver(_broadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        registerReceiver(newDataReceiver, new IntentFilter(Intents.ACTION_NEW_BG_ESTIMATE_NO_DATA));
         mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), menu_name, this);
         holdViewport.set(0, 0, 0, 0);

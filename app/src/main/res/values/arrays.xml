@@ -4,12 +4,14 @@
         <item>Bluetooth Wixel</item>
         <item>Wifi Wixel</item>
         <item>Dexbridge</item>
+        <item>Dexcom Share</item>
     </string-array>
 
     <string-array name="DexCollectionMethodValues">
         <item>BluetoothWixel</item>
         <item>WifiWixel</item>
         <item>Dexbridge</item>
+        <item>DexcomShare</item>
     </string-array>
 
     <string-array name="bgUnitEntries">
