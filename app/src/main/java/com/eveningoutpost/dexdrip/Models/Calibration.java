@@ -231,8 +231,6 @@ public class Calibration extends Model {
         Notifications.notificationSetter(context);
     }
 
-    public static void create(CalRecord[] calRecords, long addativeOffset, Context context) { create(calRecords, context, false, addativeOffset); }
-    public static void create(CalRecord[] calRecords, Context context) { create(calRecords, context, false, 0); }
     public static void create(CalRecord[] calRecords, Context context, boolean override) {
         //TODO: Change calibration.last and other queries to order calibrations by timestamp rather than ID
         Log.w("CALIBRATION-CHECK-IN: ", "Creating Calibration Record");
@@ -304,68 +302,6 @@ public class Calibration extends Model {
         }
     }
 
-    public static void create(CalRecord[] calRecords, Context context, boolean override, long addativeOffset) {
-        //TODO: Change calibration.last and other queries to order calibrations by timestamp rather than ID
-        Log.w("CALIBRATION-CHECK-IN: ", "Creating Calibration Record");
-        Sensor sensor = Sensor.currentSensor();
-        CalRecord firstCalRecord = calRecords[0];
-        CalRecord secondCalRecord = calRecords[0];
-//        CalRecord secondCalRecord = calRecords[calRecords.length - 1];
-        //TODO: Figgure out how the ratio between the two is determined
-        double calSlope = ((secondCalRecord.getScale() / secondCalRecord.getSlope()) + (3 * firstCalRecord.getScale() / firstCalRecord.getSlope())) * 250;
-
-        double calIntercept = (((secondCalRecord.getScale() * secondCalRecord.getIntercept()) / secondCalRecord.getSlope()) + ((3 * firstCalRecord.getScale() * firstCalRecord.getIntercept()) / firstCalRecord.getSlope())) / -4;
-        if (sensor != null) {
-            for(int i = 0; i < firstCalRecord.getCalSubrecords().length - 1; i++) {
-                if (((firstCalRecord.getCalSubrecords()[i] != null && Calibration.is_new(firstCalRecord.getCalSubrecords()[i], addativeOffset))) || (i == 0 && override)) {
-                    CalSubrecord calSubrecord = firstCalRecord.getCalSubrecords()[i];
-
-                    Calibration calibration = new Calibration();
-                    calibration.bg = calSubrecord.getCalBGL();
-                    calibration.timestamp = calSubrecord.getDateEntered().getTime() + addativeOffset;
-                    if (calibration.timestamp > new Date().getTime()) {
-                        Log.e(TAG, "ERROR - Calibration timestamp is from the future, wont save!");
-                        return;
-                    }
-                    calibration.raw_value = calSubrecord.getCalRaw() / 1000;
-                    calibration.slope = calSlope;
-                    calibration.intercept = calIntercept;
-
-                    calibration.sensor_confidence = ((-0.0018 * calibration.bg * calibration.bg) + (0.6657 * calibration.bg) + 36.7505) / 100;
-                    if (calibration.sensor_confidence <= 0) {
-                        calibration.sensor_confidence = 0;
-                    }
-                    calibration.slope_confidence = 0.8; //TODO: query backwards to find this value near the timestamp
-                    calibration.estimate_raw_at_time_of_calibration = calSubrecord.getCalRaw() / 1000;
-                    calibration.sensor = sensor;
-                    calibration.sensor_age_at_time_of_estimation = calibration.timestamp - sensor.started_at;
-                    calibration.uuid = UUID.randomUUID().toString();
-                    calibration.sensor_uuid = sensor.uuid;
-                    calibration.check_in = true;
-
-                    calibration.first_decay = firstCalRecord.getDecay();
-                    calibration.second_decay = secondCalRecord.getDecay();
-                    calibration.first_slope = firstCalRecord.getSlope();
-                    calibration.second_slope = secondCalRecord.getSlope();
-                    calibration.first_scale = firstCalRecord.getScale();
-                    calibration.second_scale = secondCalRecord.getScale();
-                    calibration.first_intercept = firstCalRecord.getIntercept();
-                    calibration.second_intercept = secondCalRecord.getIntercept();
-
-                    calibration.save();
-                    CalibrationSendQueue.addToQueue(calibration, context);
-                    Calibration.requestCalibrationIfRangeTooNarrow();
-                }
-            }
-            if(firstCalRecord.getCalSubrecords()[0] != null && firstCalRecord.getCalSubrecords()[2] == null) {
-                if(Calibration.latest(2).size() == 1) {
-                    Calibration.create(calRecords, context, true, 0);
-                }
-            }
-            Notifications.notificationSetter(context);
-        }
-    }
-
     public static boolean is_new(CalSubrecord calSubrecord) {
         Sensor sensor = Sensor.currentSensor();
         Calibration calibration = new Select()
@@ -382,36 +318,6 @@ public class Calibration extends Model {
             Log.d("CAL CHECK IN ", "Already have that calibration!");
             return false;
         }
-    }
-
-    public static boolean is_new(CalSubrecord calSubrecord, long addativeOffset) {
-        Sensor sensor = Sensor.currentSensor();
-        Calibration calibration = new Select()
-                .from(Calibration.class)
-                .where("Sensor = ? ", sensor.getId())
-                .where("slope_confidence != 0")
-                .where("sensor_confidence != 0")
-                .where("timestamp <= ?", calSubrecord.getDateEntered().getTime() + addativeOffset + (1000 * 60 * 3))
-                .executeSingle();
-        if(calibration != null && Math.abs(calibration.timestamp - addativeOffset) < (3*60*1000)) {
-            Log.d("CAL CHECK IN ", "Already have that calibration!");
-            return false;
-        } else {
-            Log.d("CAL CHECK IN ", "Looks like a new calibration!");
-            return true;
-        }
-    }
-
-    public static Calibration getForTimestamp(double timestamp) {
-        Sensor sensor = Sensor.currentSensor();
-        return new Select()
-                .from(Calibration.class)
-                .where("Sensor = ? ", sensor.getId())
-                .where("slope_confidence != 0")
-                .where("sensor_confidence != 0")
-                .where("timestamp < ?", timestamp)
-                .orderBy("timestamp desc")
-                .executeSingle();
     }
 
     public static Calibration create(double bg, Context context) {
@@ -539,14 +445,14 @@ public class Calibration extends Model {
     }
 
     private double slopeOOBHandler() {
-    // If the last slope was reasonable and reasonably close, use that, otherwise use a slope that may be a little steep, but its best to play it safe when uncertain
+        // If the last slope was reasonable and reasonably close, use that, otherwise use a slope that may be a little steep, but its best to play it safe when uncertain
         List<Calibration> calibrations = Calibration.latest(3);
         Calibration thisCalibration = calibrations.get(0);
         if (calibrations.size() == 3) {
             if((Math.abs(thisCalibration.bg - thisCalibration.estimate_bg_at_time_of_calibration) < 30) && (calibrations.get(1).possible_bad != null && calibrations.get(1).possible_bad == true)) {
-               return calibrations.get(1).slope;
+                return calibrations.get(1).slope;
             } else {
-               return Math.max(((-0.048) * (thisCalibration.sensor_age_at_time_of_estimation / (60000 * 60 * 24))) + 1.1, 1);
+                return Math.max(((-0.048) * (thisCalibration.sensor_age_at_time_of_estimation / (60000 * 60 * 24))) + 1.1, 1);
             }
         } else if (calibrations.size() == 2) {
             return Math.max(((-0.048) * (thisCalibration.sensor_age_at_time_of_estimation / (60000 * 60 * 24))) + 1.1, 1.05);
